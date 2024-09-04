@@ -18,7 +18,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
   const firstMount = useRef(false);
   useEffect(() => {
     if (!firstMount.current && !currentAddress) {
-      // setVisible(true);
+      setVisible(true);
       firstMount.current = true;
     }
   }, [currentAddress]);
@@ -55,7 +55,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
           style={{ padding: "30px 0" }}
           form={form}
           initialValues={{
-            address: "",
+            address: "0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB",
           }}
         >
           <Form.Item
