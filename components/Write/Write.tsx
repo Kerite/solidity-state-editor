@@ -106,26 +106,28 @@ const FormContent = ({
   );
 };
 
-const Read = ({ list, contract }: _Prop) => {
+const Write = ({ list, contract }: _Prop) => {
   return (
     <>
       <Collapse
-        items={list.map((item) => {
-          return {
-            key: item.name,
-            label: item.name,
-            children: (
-              <FormContent
-                inputs={item.inputs}
-                contract={contract}
-                name={item.name}
-              ></FormContent>
-            ),
-          };
-        })}
+        items={list
+          .filter((v) => typeof v.checked === "undefined" || v.checked)
+          .map((item) => {
+            return {
+              key: item.name,
+              label: item.name,
+              children: (
+                <FormContent
+                  inputs={item.inputs}
+                  contract={contract}
+                  name={item.name}
+                ></FormContent>
+              ),
+            };
+          })}
       />
     </>
   );
 };
 
-export default Read;
+export default Write;

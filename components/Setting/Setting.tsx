@@ -1,9 +1,8 @@
 import { Button, Checkbox, Modal, Row, Col, Divider, Drawer } from "antd";
-import type { CheckboxProps } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
-import type { AbiItem } from "@/components/Card/Card";
+import type { AbiItem } from "@/units/index";
 
 interface ContractAbi {
   readAbi: AbiItem[];
@@ -20,20 +19,23 @@ const Setting = ({ contractAbi, setContractAbi }: _Props) => {
 
   // const value = list.filter((v) => v.checked).map((v) => v.name);
 
-  const onChange = (options: string[]) => {
-    // const _list = list.map((v) => {
-    //   const _v = { ...v };
-    //   _v.checked = !!options.includes(v.name);
-    //   return _v;
-    // });
-    // setContractAbi(_list);
+  const onChange = (options: string[], type: "readAbi" | "writeAbi") => {
+    const list = contractAbi[type];
+    const _list = list.map((v) => {
+      const _v = { ...v };
+      _v.checked = !!options.includes(v.name);
+      return _v;
+    });
+    setContractAbi({
+      ...contractAbi,
+      [type]: _list,
+    });
   };
 
   const toggleModal = () => {
     setVisible((t) => !t);
   };
 
-  // const checkedValue = list.filter((v) => v.checked).map((v) => v.name);
   return (
     <>
       <Button type="primary" onClick={toggleModal}>
@@ -41,21 +43,23 @@ const Setting = ({ contractAbi, setContractAbi }: _Props) => {
         Setting attribute
       </Button>
       <Drawer
+        width={800}
         title="Select attribute display or hide"
-        placement={"top"}
         onClose={toggleModal}
         open={visible}
       >
         <h4>READ</h4>
         <Checkbox.Group
           style={{ width: "100%" }}
-          onChange={onChange}
-          defaultValue={[]}
+          onChange={(e) => onChange(e, "readAbi")}
+          defaultValue={contractAbi.readAbi
+            .filter((v) => typeof v.checked == "undefined" || v.checked)
+            .map((v) => v.name)}
         >
           <Row>
             {contractAbi.readAbi.map((item) => {
               return (
-                <Col key={item.name} span={4}>
+                <Col key={item.name} span={8}>
                   <Checkbox checked={false} value={item.name}>
                     {item.name}
                   </Checkbox>
@@ -68,13 +72,15 @@ const Setting = ({ contractAbi, setContractAbi }: _Props) => {
         <h4>WRITE</h4>
         <Checkbox.Group
           style={{ width: "100%" }}
-          onChange={onChange}
-          defaultValue={[]}
+          onChange={(e) => onChange(e, "writeAbi")}
+          defaultValue={contractAbi.writeAbi
+            .filter((v) => typeof v.checked == "undefined" || v.checked)
+            .map((v) => v.name)}
         >
           <Row>
             {contractAbi.writeAbi.map((item) => {
               return (
-                <Col key={item.name} span={4}>
+                <Col key={item.name} span={8}>
                   <Checkbox checked={false} value={item.name}>
                     {item.name}
                   </Checkbox>
@@ -84,36 +90,6 @@ const Setting = ({ contractAbi, setContractAbi }: _Props) => {
           </Row>
         </Checkbox.Group>
       </Drawer>
-    </>
-  );
-  return (
-    <>
-      <Modal
-        width="60%"
-        title="toggle show/hide"
-        open={visible}
-        onCancel={toggleModal}
-        footer={null}
-        keyboard
-      >
-        <Checkbox.Group
-          style={{ width: "100%" }}
-          onChange={onChange}
-          defaultValue={[]}
-        >
-          <Row>
-            {/* {list.map((checkItem) => {
-              return (
-                <Col key={checkItem.name} span={8}>
-                  <Checkbox checked={false} value={checkItem.name}>
-                    {checkItem.name}
-                  </Checkbox>
-                </Col>
-              );
-            })} */}
-          </Row>
-        </Checkbox.Group>
-      </Modal>
     </>
   );
 };

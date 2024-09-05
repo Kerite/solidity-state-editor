@@ -8,6 +8,7 @@ export interface AbiItem {
   }[];
   stateMutability: string;
   type: string;
+  checked?: boolean;
 }
 
 const READ_TYPE = ["view", "pure"];
