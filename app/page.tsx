@@ -56,7 +56,7 @@ export default function Home() {
 
     orginalContractAbi.current = JSON.parse(data.result);
     const { readAbi, writeAbi } = formatContractAbi(orginalContractAbi.current);
-
+    console.log(orginalContractAbi.current);
     setCurrentAddress(address);
     setContractAbi({ readAbi, writeAbi });
   };

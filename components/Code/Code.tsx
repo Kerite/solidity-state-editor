@@ -1,5 +1,6 @@
 import { App, Button, Modal } from "antd";
 import { useEffect, useState } from "react";
+import { FileWordOutlined } from "@ant-design/icons";
 import axios from "axios";
 
 interface SourceCode {
@@ -36,6 +37,7 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
   return (
     <>
       <Button style={{ margin: "0 20px" }} onClick={toggleModal}>
+        <FileWordOutlined />
         View contract source code
       </Button>
       <Modal

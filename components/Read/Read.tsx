@@ -82,27 +82,24 @@ const FormContent = ({
 };
 
 const Read = ({ list, contract }: _Prop) => {
-  console.log(list);
   return (
-    <>
-      <Collapse
-        items={list
-          .filter((v) => typeof v.checked === "undefined" || v.checked)
-          .map((item) => {
-            return {
-              key: item.name,
-              label: item.name,
-              children: (
-                <FormContent
-                  inputs={item.inputs}
-                  contract={contract}
-                  name={item.name}
-                ></FormContent>
-              ),
-            };
-          })}
-      />
-    </>
+    <Collapse
+      items={list
+        .filter((v) => typeof v.checked === "undefined" || v.checked)
+        .map((item) => {
+          return {
+            key: item.name,
+            label: item.name,
+            children: (
+              <FormContent
+                inputs={item.inputs}
+                contract={contract}
+                name={item.name}
+              ></FormContent>
+            ),
+          };
+        })}
+    />
   );
 };
 
