@@ -54,6 +54,7 @@ const Card = (prop: _Prop) => {
 
     if (inputs.length === 0) {
       const data = await action();
+      console.log("data", data);
       setResult(data.toString());
       return;
     }
