@@ -17,10 +17,7 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
   };
 
   const getSourceCode = async () => {
-    if (codeList) {
-      return;
-    }
-
+    if (!currentAddress) return;
     const { data } = await axios.get(`/api/getSourceCode`, {
       params: { address: currentAddress },
     });
@@ -29,14 +26,12 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
       return;
     }
 
-    setCodeList(data.result);
+    setCodeList(data.result); //TODO
   };
 
   useEffect(() => {
-    if (visible) {
-      getSourceCode();
-    }
-  }, [visible, currentAddress]);
+    getSourceCode();
+  }, [currentAddress]);
 
   return (
     <>
@@ -44,14 +39,17 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
         View contract source code
       </Button>
       <Modal
-        title="Code"
+        width={"60%"}
+        title="Source Code"
         onCancel={toggleModal}
         onClose={toggleModal}
         open={visible}
       >
-        {(codeList || []).map((code) => {
-          return code.SourceCode;
-        })}
+        <div style={{ whiteSpace: "pre-wrap" }}>
+          {(codeList || []).map((code) => {
+            return code.SourceCode;
+          })}
+        </div>
       </Modal>
     </>
   );

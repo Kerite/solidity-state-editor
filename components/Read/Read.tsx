@@ -1,9 +1,6 @@
 import { Collapse, Form, Input, Button, message, App } from "antd";
 import { useState } from "react";
-import type { CollapseProps } from "antd";
 import type { AbiItem } from "@/units/index";
-
-import style from "./Read.module.css";
 
 interface _Prop {
   list: AbiItem[];
@@ -77,7 +74,7 @@ const FormContent = ({
       <Button type="primary" size="small" onClick={onSubmit}>
         query
       </Button>
-      <div className={style.searchResult}>
+      <div>
         <p>query result：{result || "--"}</p>
       </div>
     </>

@@ -15,14 +15,11 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
 
   const [form] = Form.useForm();
 
-  // TODO useFirstEffect
-  const firstMount = useRef(false);
   useEffect(() => {
-    if (!firstMount.current && !currentAddress) {
+    if (!currentAddress) {
       // setVisible(true);
-      firstMount.current = true;
     }
-  }, [currentAddress]);
+  }, []);
 
   const toggleModal = () => setVisible(!visible);
 

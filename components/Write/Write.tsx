@@ -1,9 +1,6 @@
 import { Collapse, Form, Input, Button, App } from "antd";
 import { useState } from "react";
-import type { CollapseProps } from "antd";
 import type { AbiItem } from "@/units/index";
-
-import style from "./Write.module.css";
 
 interface _Prop {
   list: AbiItem[];
@@ -92,9 +89,9 @@ const FormContent = ({
         {loading ? "Waiting for transaction..." : "submit"}
       </Button>
 
-      <div className={style.searchResult}>
+      <div>
         {txList.map((v) => (
-          <div key={v.hash} className={style.hashText}>
+          <div key={v.hash}>
             hash:
             <a
               target="_blank"
