@@ -2,20 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
-import { Button, message, Tabs } from "antd";
+import { App, message, Tabs } from "antd";
 import Header from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
 import Read from "@/components/Read/Read";
 import Write from "@/components/Write/Write";
+import Connect from "@/components/Connect/Code";
 
 import axios from "axios";
 
 import { formatContractAbi } from "@/units/index";
 import type { AbiItem } from "@/units/index";
 
-interface _MyEthers {
+interface MyEthers {
   provider: any;
   account?: string;
   signer?: any;
@@ -24,7 +25,7 @@ interface _MyEthers {
 
 export default function Home() {
   const orginalContractAbi = useRef<AbiItem[]>([]);
-  const [myEthers, setMyEthers] = useState<_MyEthers>();
+  const [myEthers, setMyEthers] = useState<MyEthers>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
 
@@ -33,14 +34,14 @@ export default function Home() {
     writeAbi: AbiItem[];
   }>({ readAbi: [], writeAbi: [] });
 
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
 
   useEffect(() => {
     // @ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setMyEthers({ provider });
 
-    // onSearchContract("0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB");
+    onSearchContract("0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB");
   }, []);
 
   const onSearchContract = async (address: string) => {
@@ -49,10 +50,7 @@ export default function Home() {
     });
 
     if (data.status !== "1") {
-      messageApi.open({
-        type: "error",
-        content: data.result,
-      });
+      message.error(data.result);
       return;
     }
 
@@ -67,7 +65,7 @@ export default function Home() {
     const provider = myEthers?.provider;
     const [account] = await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner();
-    const obj: _MyEthers = {
+    const obj: MyEthers = {
       provider,
       account,
       signer,
@@ -97,9 +95,7 @@ export default function Home() {
 
           <Code></Code>
 
-          <Button type="primary" danger onClick={onConnectMetaMask}>
-            Connect to MetaMask
-          </Button>
+          <Connect connectMetaMask={onConnectMetaMask}></Connect>
         </div>
 
         <Tabs
@@ -127,18 +123,7 @@ export default function Home() {
             },
           ]}
         ></Tabs>
-        {contextHolder}
       </div>
-      {/* <Row gutter={[20, 20]} style={{ paddingBottom: 40 }}>
-        {contractAbi.map((item, index) => {
-          if (!item.checked) return null;
-          return (
-            <Col key={index} span={8}>
-              <Card {...item} contract={myEthers && myEthers.contract}></Card>
-            </Col>
-          );
-        })}
-      </Row> */}
     </>
   );
 }

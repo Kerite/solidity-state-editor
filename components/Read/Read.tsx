@@ -1,4 +1,4 @@
-import { Collapse, Form, Input, Button, message } from "antd";
+import { Collapse, Form, Input, Button, message, App } from "antd";
 import { useState } from "react";
 import type { CollapseProps } from "antd";
 import type { AbiItem } from "@/units/index";
@@ -29,41 +29,36 @@ const FormContent = ({
   contract: any;
 }) => {
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const [result, setResult] = useState();
 
   const action = contract?.[name];
 
   const onSubmit = async () => {
+    const data = await form.validateFields();
+    const params = inputs.reduce((pre, cur) => {
+      let val = data[cur.name];
+      if (cur.type.includes("uint")) {
+        val = Number(val);
+      }
+      return [...pre, val];
+    }, []);
+
     if (!contract) {
-      messageApi.open({
-        type: "error",
-        content: "please connest to MetaMask",
-      });
+      message.error("please connest to MetaMask");
       return;
     }
 
-    form.validateFields().then(async (res) => {
-      const params = inputs.reduce((pre, cur) => {
-        let val = res[cur.name];
-        if (cur.type.includes("uint")) {
-          val = Number(val);
-        }
-        return [...pre, val];
-      }, []);
-
-      try {
-        const data = await action.apply(null, params);
-        setResult(data.toString());
-      } catch (error) {
-        console.error(error);
-      }
-    });
+    try {
+      const data = await action.apply(null, params);
+      setResult(data.toString());
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
-      {contextHolder}
       <Form form={form}>
         {inputs.map((v) => {
           return (

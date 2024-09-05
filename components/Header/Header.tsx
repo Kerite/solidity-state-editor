@@ -19,7 +19,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
   const firstMount = useRef(false);
   useEffect(() => {
     if (!firstMount.current && !currentAddress) {
-      setVisible(true);
+      // setVisible(true);
       firstMount.current = true;
     }
   }, [currentAddress]);
