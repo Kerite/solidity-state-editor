@@ -70,8 +70,23 @@ export const list1 = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "factoryManager_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "implementation_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "feeTo_",
+        type: "address",
+      },
+      {
         internalType: "uint256",
-        name: "_startTime",
+        name: "maxFee_",
         type: "uint256",
       },
     ],
@@ -81,165 +96,79 @@ export const list1 = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "token",
-        type: "address",
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
       },
     ],
-    name: "SafeERC20FailedOperation",
+    name: "InsufficientFee",
     type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
         internalType: "address",
-        name: "newBoostContract",
+        name: "implementation",
         type: "address",
       },
     ],
-    name: "BoostContractUpdated",
-    type: "event",
+    name: "InvalidFactoryManager",
+    type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "fee",
         type: "uint256",
       },
     ],
-    name: "BoostRewardDistributed",
-    type: "event",
+    name: "InvalidFee",
+    type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: true,
         internalType: "address",
-        name: "user",
+        name: "receiver",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "pid",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
     ],
-    name: "Claim",
-    type: "event",
+    name: "InvalidFeeReceiver",
+    type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "uint256",
-        name: "incClaimFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "rewardPoolFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "instantRewardFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "treasuryFee",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "prizePoolFee",
-        type: "uint256",
-      },
-    ],
-    name: "FeesUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "address",
-        name: "user",
+        name: "factoryManager",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
     ],
-    name: "IncentiveClaimed",
-    type: "event",
+    name: "InvalidImplementation",
+    type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "level",
         type: "uint256",
       },
     ],
-    name: "IncentiveDistributed",
-    type: "event",
+    name: "InvalidLevel",
+    type: "error",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "maxFee",
         type: "uint256",
       },
     ],
-    name: "InstantRewardClaimed",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "InstantRewardDistributed",
-    type: "event",
+    name: "InvalidMaxFee",
+    type: "error",
   },
   {
     anonymous: false,
@@ -262,185 +191,178 @@ export const list1 = [
   },
   {
     anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "tokenType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "tokenVersion",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "level",
+        type: "uint256",
+      },
+    ],
+    name: "TokenCreated",
+    type: "event",
+  },
+  {
     inputs: [],
-    name: "ParameterUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
+    name: "FACTORY_MANAGER",
+    outputs: [
       {
-        indexed: false,
-        internalType: "uint256",
-        name: "pid",
-        type: "uint256",
-      },
-      {
-        indexed: false,
         internalType: "address",
-        name: "stakingToken",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "dripToken",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "allocPoint",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "active",
-        type: "bool",
-      },
-    ],
-    name: "PidAdded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "pid",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "allocPoint",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "active",
-        type: "bool",
-      },
-    ],
-    name: "PidUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newSigner",
+        name: "",
         type: "address",
       },
     ],
-    name: "SignerSet",
-    type: "event",
+    stateMutability: "view",
+    type: "function",
   },
   {
-    anonymous: false,
-    inputs: [
+    inputs: [],
+    name: "MAX_FEE",
+    outputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: true,
         internalType: "uint256",
-        name: "pid",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
+        name: "",
         type: "uint256",
       },
     ],
-    name: "Stake",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newTreasury",
-        type: "address",
-      },
-    ],
-    name: "TreasuryUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "pid",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "Unstake",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IERC20",
-        name: "_stakingToken",
-        type: "address",
-      },
-      {
-        internalType: "contract IERC20",
-        name: "_dripToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardsPool",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_allocPoint",
-        type: "uint256",
-      },
-    ],
-    name: "add",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "level",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "symbol",
+            type: "string",
+          },
+          {
+            internalType: "uint8",
+            name: "decimals",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "totalSupply",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "logoLink",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "twitterLink",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "telegramLink",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "discordLink",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "websiteLink",
+            type: "string",
+          },
+        ],
+        internalType: "struct TokenMetadata",
+        name: "tokenMetadata",
+        type: "tuple",
+      },
+    ],
+    name: "create",
+    outputs: [
+      {
         internalType: "address",
-        name: "_user",
+        name: "token",
         type: "address",
       },
     ],
-    name: "allPendingRewards",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeTo",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "fees",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getLevels",
     outputs: [
       {
         internalType: "uint256[]",
@@ -452,285 +374,29 @@ export const list1 = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-    ],
-    name: "claim",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
-    name: "claimAll",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "claimIncentives",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "claimInstantRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "distributeBoost",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "distributeIncentiveDividends",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "distributeInstantRewardDividends",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-    ],
-    name: "exit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getFeeInfo",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_rewardPoolFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_instantRewardFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_treasuryFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_prizePoolFee",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "getIncentiveInfo",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "pendingIncentive",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "redeemedIncentives",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-    ],
-    name: "getPidInfo",
+    name: "implementation",
     outputs: [
       {
         internalType: "address",
-        name: "stakingToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "dripToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "totalStaked",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "totalRewards",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "allocPoint",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "active",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-    ],
-    name: "getUserInfo",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "totalRedeemed",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "totalCompounded",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "lastRewardTime",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "lastAccRewardsPerShare",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "incClaimFee",
-    outputs: [
-      {
-        internalType: "uint256",
         name: "",
-        type: "uint256",
+        type: "address",
       },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "implementationVersion",
+    outputs: [
       {
-        internalType: "address",
-        name: "_hlawExchange",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_hlawToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_incRewardPool",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_instantRewardPool",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardPool",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_prizePool",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_treasury",
-        type: "address",
+        internalType: "uint96",
+        name: "",
+        type: "uint96",
       },
     ],
-    name: "init",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -747,81 +413,6 @@ export const list1 = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "pendingIncentives",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "pendingInstantRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "pendingRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "poolLength",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "renounceOwnership",
     outputs: [],
@@ -832,21 +423,16 @@ export const list1 = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_pid",
+        name: "level",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_allocPoint",
+        name: "fee",
         type: "uint256",
       },
-      {
-        internalType: "bool",
-        name: "_active",
-        type: "bool",
-      },
     ],
-    name: "set",
+    name: "setFee",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -855,44 +441,11 @@ export const list1 = [
     inputs: [
       {
         internalType: "address",
-        name: "_newBoostContract",
+        name: "feeReceivingAddress",
         type: "address",
       },
     ],
-    name: "setBoostContract",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_incClaimFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_rewardPoolFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_instantRewardFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_treasuryFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_prizePoolFee",
-        type: "uint256",
-      },
-    ],
-    name: "setFees",
+    name: "setFeeTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -901,11 +454,11 @@ export const list1 = [
     inputs: [
       {
         internalType: "address",
-        name: "_newSigner",
+        name: "implementation_",
         type: "address",
       },
     ],
-    name: "setSigner",
+    name: "setImplementation",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -913,58 +466,14 @@ export const list1 = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_newTreasury",
-        type: "address",
+        internalType: "uint256[]",
+        name: "_levels",
+        type: "uint256[]",
       },
     ],
-    name: "setTreasury",
+    name: "setLevels",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "stake",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalPools",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalStakedTokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -976,24 +485,6 @@ export const list1 = [
       },
     ],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "unstake",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

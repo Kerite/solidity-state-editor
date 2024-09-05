@@ -37,11 +37,7 @@ export default function Home() {
   const { message } = App.useApp();
 
   useEffect(() => {
-    // @ts-ignore
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setMyEthers({ provider });
-
-    onSearchContract("0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB");
+    onSearchContract("0xbC16C9dB7d00b60c3A00085116b10C58A8578190");
   }, []);
 
   const onSearchContract = async (address: string) => {
@@ -56,13 +52,14 @@ export default function Home() {
 
     orginalContractAbi.current = JSON.parse(data.result);
     const { readAbi, writeAbi } = formatContractAbi(orginalContractAbi.current);
-    console.log(orginalContractAbi.current);
+    console.log("contract abi", orginalContractAbi.current);
     setCurrentAddress(address);
     setContractAbi({ readAbi, writeAbi });
   };
 
   const onConnectMetaMask = async () => {
-    const provider = myEthers?.provider;
+    //@ts-ignore
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const [account] = await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner();
     const obj: MyEthers = {
@@ -70,11 +67,11 @@ export default function Home() {
       account,
       signer,
     };
+
     const contractABI: AbiItem[] = orginalContractAbi.current;
-    if (currentAddress && contractABI.length > 0) {
-      const contract = new ethers.Contract(currentAddress, contractABI, signer);
-      obj.contract = contract;
-    }
+    const contract = new ethers.Contract(currentAddress, contractABI, signer);
+    obj.contract = contract;
+
     setMyEthers(obj);
   };
 

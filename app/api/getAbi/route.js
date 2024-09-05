@@ -4,11 +4,7 @@ import axios from "axios";
 import { list1 } from "./mock";
 
 export async function GET(request) {
-  // const _data = {
-  //   status: "1",
-  //   result: JSON.stringify(list1),
-  // };
-  // return NextResponse.json(_data);
+  // return NextResponse.json({ status: "1", result: JSON.stringify(list1) });
 
   const url = new URL(request.url);
   const address = url.searchParams.get("address");

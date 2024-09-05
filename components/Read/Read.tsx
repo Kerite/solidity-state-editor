@@ -1,5 +1,6 @@
-import { Collapse, Form, Input, Button, message, App } from "antd";
+import { Collapse, Form, Input, Button, App } from "antd";
 import { useState } from "react";
+import formatRender from "./renderResult";
 import type { AbiItem } from "@/units/index";
 
 interface _Prop {
@@ -20,9 +21,11 @@ const FormContent = ({
   inputs,
   contract,
   name,
+  outputs,
 }: {
   name: AbiItem["name"];
   inputs: AbiItem["inputs"];
+  outputs: AbiItem["outputs"];
   contract: any;
 }) => {
   const [form] = Form.useForm();
@@ -45,10 +48,9 @@ const FormContent = ({
       message.error("please connest to MetaMask");
       return;
     }
-
     try {
       const data = await action.apply(null, params);
-      setResult(data.toString());
+      setResult(data);
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +77,7 @@ const FormContent = ({
         query
       </Button>
       <div>
-        <p>query result：{result || "--"}</p>
+        <p>query result：{formatRender(result, outputs)}</p>
       </div>
     </>
   );
@@ -93,6 +95,7 @@ const Read = ({ list, contract }: _Prop) => {
             children: (
               <FormContent
                 inputs={item.inputs}
+                outputs={item.outputs}
                 contract={contract}
                 name={item.name}
               ></FormContent>

@@ -61,7 +61,8 @@ const FormContent = ({
         });
       });
     } catch (error) {
-      console.error(error);
+      //@ts-ignore
+      message.error(error.message);
     }
   };
 
