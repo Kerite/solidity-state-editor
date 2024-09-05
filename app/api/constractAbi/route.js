@@ -17,7 +17,8 @@ export async function GET(request) {
   const ETHERSCAN_URL = process.env.ETHERSCAN_URL;
 
   const fetchUrl = `${ETHERSCAN_URL}?module=contract&action=getabi&address=${address}&apikey=${APIKEY}`;
-  console.log(fetchUrl);
+  console.log("fetchUrl", fetchUrl);
+
   const { data } = await axios.get(fetchUrl);
   return NextResponse.json(data);
 }

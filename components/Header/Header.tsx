@@ -11,10 +11,11 @@ interface _Prop {
 
 const Header = ({ currentAddress, onSearchContract }: _Prop) => {
   const [visible, setVisible] = useState<boolean>(false);
+  const [env, setEnv] = useState<string>("");
 
   const [form] = Form.useForm();
 
-  // 可以抽离个 useFirstEffect
+  // TODO useFirstEffect
   const firstMount = useRef(false);
   useEffect(() => {
     if (!firstMount.current && !currentAddress) {
@@ -23,7 +24,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
     }
   }, [currentAddress]);
 
-  const toggleModal = () => setVisible(!visible); // 切换弹窗显示/隐藏
+  const toggleModal = () => setVisible(!visible);
 
   const onSubmit = () => {
     form.validateFields().then((res) => {
@@ -34,7 +35,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
   return (
     <>
       <Layout.Header className={style.header}>
-        <div></div>
+        <div>env:{env || "--"}</div>
         <div>
           <span>Address: {currentAddress || "--"}</span>
           <span className={style.updataBtn} onClick={toggleModal}>

@@ -11,7 +11,6 @@ export const list = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -25,7 +24,6 @@ export const list = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -39,7 +37,6 @@ export const list = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -53,7 +50,6 @@ export const list = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -67,7 +63,6 @@ export const list = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
 ];
 
@@ -82,7 +77,6 @@ export const list1 = [
     ],
     stateMutability: "nonpayable",
     type: "constructor",
-    checked: true,
   },
   {
     inputs: [
@@ -94,7 +88,6 @@ export const list1 = [
     ],
     name: "SafeERC20FailedOperation",
     type: "error",
-    checked: true,
   },
   {
     anonymous: false,
@@ -108,7 +101,6 @@ export const list1 = [
     ],
     name: "BoostContractUpdated",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -122,7 +114,6 @@ export const list1 = [
     ],
     name: "BoostRewardDistributed",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -148,7 +139,6 @@ export const list1 = [
     ],
     name: "Claim",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -186,7 +176,6 @@ export const list1 = [
     ],
     name: "FeesUpdated",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -206,7 +195,6 @@ export const list1 = [
     ],
     name: "IncentiveClaimed",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -220,7 +208,6 @@ export const list1 = [
     ],
     name: "IncentiveDistributed",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -240,7 +227,6 @@ export const list1 = [
     ],
     name: "InstantRewardClaimed",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -254,7 +240,6 @@ export const list1 = [
     ],
     name: "InstantRewardDistributed",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -274,14 +259,12 @@ export const list1 = [
     ],
     name: "OwnershipTransferred",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
     inputs: [],
     name: "ParameterUpdated",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -319,7 +302,6 @@ export const list1 = [
     ],
     name: "PidAdded",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -345,7 +327,6 @@ export const list1 = [
     ],
     name: "PidUpdated",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -359,7 +340,6 @@ export const list1 = [
     ],
     name: "SignerSet",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -385,7 +365,6 @@ export const list1 = [
     ],
     name: "Stake",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -399,7 +378,6 @@ export const list1 = [
     ],
     name: "TreasuryUpdated",
     type: "event",
-    checked: true,
   },
   {
     anonymous: false,
@@ -425,7 +403,6 @@ export const list1 = [
     ],
     name: "Unstake",
     type: "event",
-    checked: true,
   },
   {
     inputs: [
@@ -454,7 +431,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -474,7 +450,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -488,7 +463,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -496,7 +470,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -504,7 +477,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -512,7 +484,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -526,7 +497,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -540,7 +510,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -554,7 +523,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -568,7 +536,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -597,7 +564,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -622,7 +588,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -667,7 +632,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -712,7 +676,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -726,7 +689,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -770,7 +732,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -784,7 +745,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -804,7 +764,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -824,7 +783,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -849,7 +807,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -863,7 +820,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -871,7 +827,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -895,7 +850,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -909,7 +863,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -943,7 +896,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -957,7 +909,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -971,7 +922,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -990,7 +940,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -1004,7 +953,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [],
@@ -1018,7 +966,6 @@ export const list1 = [
     ],
     stateMutability: "view",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -1032,7 +979,6 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
   {
     inputs: [
@@ -1051,6 +997,5 @@ export const list1 = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    checked: true,
   },
 ];
