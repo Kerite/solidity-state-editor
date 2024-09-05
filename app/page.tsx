@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
-import { App, message, Tabs } from "antd";
+import { App, Tabs } from "antd";
 import Header from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
@@ -45,7 +45,7 @@ export default function Home() {
   }, []);
 
   const onSearchContract = async (address: string) => {
-    const { data } = await axios.get(`/api/constractAbi`, {
+    const { data } = await axios.get(`/api/getAbi`, {
       params: { address },
     });
 
@@ -93,7 +93,7 @@ export default function Home() {
             contractAbi={contractAbi}
           ></Setting>
 
-          <Code></Code>
+          <Code currentAddress={currentAddress}></Code>
 
           <Connect connectMetaMask={onConnectMetaMask}></Connect>
         </div>

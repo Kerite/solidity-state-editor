@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-import { list1 } from "./data";
+import { list1 } from "./mock";
 
 export async function GET(request) {
   // const _data = {
