@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ethers } from "ethers";
 import { App, Tabs } from "antd";
 import { ReadOutlined, EditOutlined } from "@ant-design/icons";
@@ -26,7 +26,7 @@ interface MyEthers {
 
 export default function Home() {
   const orginalContractAbi = useRef<AbiItem[]>([]);
-  const [myEthers, setMyEthers] = useState<MyEthers>();
+  const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
 
@@ -36,10 +36,6 @@ export default function Home() {
   }>({ readAbi: [], writeAbi: [] });
 
   const { message } = App.useApp();
-
-  useEffect(() => {
-    // onSearchContract("0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB");
-  }, []);
 
   const onSearchContract = async (address: string) => {
     try {
@@ -59,6 +55,7 @@ export default function Home() {
       console.log("contract abi", orginalContractAbi.current);
       setCurrentAddress(address);
       setContractAbi({ readAbi, writeAbi });
+      setMyEthers(null);
       return true;
     } catch (error) {
       return false;

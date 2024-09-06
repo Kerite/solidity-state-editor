@@ -6,7 +6,7 @@ import style from "./Header.module.css";
 
 interface _Prop {
   currentAddress: string | undefined;
-  onSearchContract: (address: string) => boolean;
+  onSearchContract: (address: string) => Promise<boolean>;
 }
 
 const Header = ({ currentAddress, onSearchContract }: _Prop) => {
