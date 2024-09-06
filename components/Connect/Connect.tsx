@@ -16,9 +16,7 @@ const Connect = ({
           borderRadius: "50%",
         }}
       ></span>
-      {account
-        ? `Connected - wallet [account:${account}]`
-        : "Connect to wallet"}
+      {account ? `Connected - web3 [account:${account}]` : "Connect to web3"}
     </Button>
   );
 };
