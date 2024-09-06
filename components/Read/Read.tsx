@@ -77,7 +77,11 @@ const FormContent = ({
         query
       </Button>
       <div>
-        <p>query result：{formatRender(result, outputs)}</p>
+        <p>
+          <strong>query result</strong>
+          <span style={{ color: "#999" }}>{`[ ${outputs[0].type} ]`}</span>：
+          {formatRender(result, outputs)}
+        </p>
       </div>
     </>
   );
