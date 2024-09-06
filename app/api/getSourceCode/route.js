@@ -8,7 +8,7 @@ const getLoopData = async (fetchUrl) => {
     res.data.status === "0" &&
     String(res.data.result).indexOf("Max rate limit reached") > -1
   ) {
-    return await getData(fetchUrl);
+    return await getLoopData(fetchUrl);
   }
   return res;
 };
