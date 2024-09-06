@@ -3,12 +3,11 @@
   align-items: center;
   justify-content: space-between;
   color: #fff !important;
+  font-size: 18px;
 }
 
 .updataBtn {
-  padding: 10px 20px;
+  padding: 10px 30px;
   cursor: pointer;
-}
-.updataBtn:hover {
-  color: blue;
+  color: #1677ff;
 }

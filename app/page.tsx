@@ -1,76 +1,83 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { ethers } from "ethers";
-import { Row, Col, message } from "antd";
+import { App, Tabs } from "antd";
+import { ReadOutlined, EditOutlined } from "@ant-design/icons";
 import Header from "@/components/Header/Header";
-import Card from "@/components/Card/Card";
-import type { AbiItem } from "@/components/Card/Card";
 
 import Setting from "@/components/Setting/Setting";
+import Code from "@/components/Code/Code";
+import Read from "@/components/Read/Read";
+import Write from "@/components/Write/Write";
+import Connect from "@/components/Connect/Connect";
 
 import axios from "axios";
 
-interface _MyEthers {
+import { formatContractAbi } from "@/units/index";
+import type { AbiItem } from "@/units/index";
+
+interface MyEthers {
   provider: any;
-  account: string;
-  signer: any;
+  account?: string;
+  signer?: any;
   contract?: any;
 }
 
 export default function Home() {
-  const [myEthers, setMyEthers] = useState<_MyEthers>();
+  const orginalContractAbi = useRef<AbiItem[]>([]);
+  const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
 
-  const [contractAbi, setContractAbi] = useState<AbiItem[]>([]);
+  const [contractAbi, setContractAbi] = useState<{
+    readAbi: AbiItem[];
+    writeAbi: AbiItem[];
+  }>({ readAbi: [], writeAbi: [] });
 
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
 
-  const initMetamask = async () => {
-    // @ts-ignore
+  const onSearchContract = async (address: string) => {
+    try {
+      const { data } = await axios.get(`/api/getAbi`, {
+        params: { address },
+      });
+
+      if (data.status !== "1") {
+        message.error(data.result);
+        return false;
+      }
+
+      orginalContractAbi.current = JSON.parse(data.result);
+      const { readAbi, writeAbi } = formatContractAbi(
+        orginalContractAbi.current
+      );
+      console.log("contract abi", orginalContractAbi.current);
+      setCurrentAddress(address);
+      setContractAbi({ readAbi, writeAbi });
+      setMyEthers(null);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const onConnectMetaMask = async () => {
+    //@ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const [account] = await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner();
-
-    setMyEthers({
+    const obj: MyEthers = {
       provider,
       account,
       signer,
-    });
-  };
+    };
 
-  useEffect(() => {
-    initMetamask();
-  }, []);
+    const contractABI: AbiItem[] = orginalContractAbi.current;
+    const contract = new ethers.Contract(currentAddress, contractABI, signer);
+    obj.contract = contract;
 
-  const onSearchContract = async (address: string) => {
-    if (!myEthers) {
-      initMetamask();
-      return;
-    }
-
-    const { data } = await axios.get(`/api/constractAbi`, {
-      params: { address },
-    });
-
-    if (data.status !== "1") {
-      messageApi.open({
-        type: "error",
-        content: "contract is undefind",
-      });
-      return;
-    }
-    const contractABI = JSON.parse(data.result);
-    const contract = new ethers.Contract(address, contractABI, myEthers.signer);
-
-    setMyEthers({ ...myEthers, contract });
-    setContractAbi(
-      contractABI
-        .filter((v: AbiItem) => v.type === "function")
-        .map((v: AbiItem) => ({ ...v, checked: true }))
-    );
-    setCurrentAddress(address);
+    setMyEthers(obj);
   };
 
   return (
@@ -79,18 +86,51 @@ export default function Home() {
         currentAddress={currentAddress}
         onSearchContract={onSearchContract}
       ></Header>
-      <Setting setContractAbi={setContractAbi} list={contractAbi}></Setting>
-      <Row gutter={[20, 20]} style={{ paddingBottom: 40 }}>
-        {contractAbi.map((item, index) => {
-          if (!item.checked) return null;
-          return (
-            <Col key={index} span={8}>
-              <Card {...item} contract={myEthers && myEthers.contract}></Card>
-            </Col>
-          );
-        })}
-      </Row>
-      {contextHolder}
+      <div style={{ padding: 20 }}>
+        <div
+          style={{ margin: "0 0 20px", display: "flex", alignItems: "center" }}
+        >
+          <Setting
+            setContractAbi={setContractAbi}
+            contractAbi={contractAbi}
+          ></Setting>
+
+          <Code currentAddress={currentAddress}></Code>
+
+          <Connect
+            connectMetaMask={onConnectMetaMask}
+            account={myEthers?.account}
+          ></Connect>
+        </div>
+
+        <Tabs
+          type="card"
+          items={[
+            {
+              icon: <ReadOutlined />,
+              label: "READ",
+              key: "1",
+              children: (
+                <Read
+                  list={contractAbi.readAbi}
+                  contract={myEthers?.contract}
+                ></Read>
+              ),
+            },
+            {
+              icon: <EditOutlined />,
+              label: "WRITE",
+              key: "2",
+              children: (
+                <Write
+                  list={contractAbi.writeAbi}
+                  contract={myEthers?.contract}
+                ></Write>
+              ),
+            },
+          ]}
+        ></Tabs>
+      </div>
     </>
   );
 }
