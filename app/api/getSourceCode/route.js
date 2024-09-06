@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
+let a = 0;
 //Max rate limit reached, please use API Key for higher rate limit  【ps: dev key】
 const getLoopData = async (fetchUrl) => {
   const res = await axios.get(fetchUrl);
@@ -8,7 +9,9 @@ const getLoopData = async (fetchUrl) => {
     res.data.status === "0" &&
     String(res.data.result).indexOf("Max rate limit reached") > -1
   ) {
-    return await getLoopData(fetchUrl);
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve(getLoopData(fetchUrl)));
+    });
   }
   return res;
 };
