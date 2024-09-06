@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
 import { App, Tabs } from "antd";
+import { ReadOutlined, EditOutlined } from "@ant-design/icons";
 import Header from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
 import Read from "@/components/Read/Read";
 import Write from "@/components/Write/Write";
-import Connect from "@/components/Connect/Code";
+import Connect from "@/components/Connect/Connect";
 
 import axios from "axios";
 
@@ -37,7 +38,7 @@ export default function Home() {
   const { message } = App.useApp();
 
   useEffect(() => {
-    onSearchContract("0xbC16C9dB7d00b60c3A00085116b10C58A8578190");
+    // onSearchContract("0x4EF072FC75A2a7F8310c143a78cEC1333D8A46fB");
   }, []);
 
   const onSearchContract = async (address: string) => {
@@ -92,13 +93,17 @@ export default function Home() {
 
           <Code currentAddress={currentAddress}></Code>
 
-          <Connect connectMetaMask={onConnectMetaMask}></Connect>
+          <Connect
+            connectMetaMask={onConnectMetaMask}
+            account={myEthers?.account}
+          ></Connect>
         </div>
 
         <Tabs
           type="card"
           items={[
             {
+              icon: <ReadOutlined />,
               label: "READ",
               key: "1",
               children: (
@@ -109,6 +114,7 @@ export default function Home() {
               ),
             },
             {
+              icon: <EditOutlined />,
               label: "WRITE",
               key: "2",
               children: (
