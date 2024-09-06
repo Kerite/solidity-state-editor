@@ -65,7 +65,7 @@ const Header = ({ currentAddress, onSearchContract }: _Prop) => {
         <div>
           <span>Address: {currentAddress || "--"}</span>
           <span className={style.updataBtn} onClick={toggleModal}>
-            Update
+            Edit
           </span>
         </div>
       </Layout.Header>
