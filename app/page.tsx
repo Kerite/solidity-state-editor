@@ -42,20 +42,27 @@ export default function Home() {
   }, []);
 
   const onSearchContract = async (address: string) => {
-    const { data } = await axios.get(`/api/getAbi`, {
-      params: { address },
-    });
+    try {
+      const { data } = await axios.get(`/api/getAbi`, {
+        params: { address },
+      });
 
-    if (data.status !== "1") {
-      message.error(data.result);
-      return;
+      if (data.status !== "1") {
+        message.error(data.result);
+        return false;
+      }
+
+      orginalContractAbi.current = JSON.parse(data.result);
+      const { readAbi, writeAbi } = formatContractAbi(
+        orginalContractAbi.current
+      );
+      console.log("contract abi", orginalContractAbi.current);
+      setCurrentAddress(address);
+      setContractAbi({ readAbi, writeAbi });
+      return true;
+    } catch (error) {
+      return false;
     }
-
-    orginalContractAbi.current = JSON.parse(data.result);
-    const { readAbi, writeAbi } = formatContractAbi(orginalContractAbi.current);
-    console.log("contract abi", orginalContractAbi.current);
-    setCurrentAddress(address);
-    setContractAbi({ readAbi, writeAbi });
   };
 
   const onConnectMetaMask = async () => {

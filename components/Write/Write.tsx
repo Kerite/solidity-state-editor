@@ -71,11 +71,11 @@ const FormContent = ({
   return (
     <>
       <Form form={form}>
-        {inputs.map((v) => {
+        {inputs.map((v, i) => {
           return (
             <Form.Item
               style={{ marginBottom: 0 }}
-              key={v.name}
+              key={`${v.name}_${i}`}
               name={v.name}
               label={<Label name={v.name} type={v.type}></Label>}
               rules={[{ required: true, message: `Please input ${v.name}!` }]}
