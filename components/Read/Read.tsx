@@ -92,9 +92,9 @@ const Read = ({ list, contract }: _Prop) => {
     <Collapse
       items={list
         .filter((v) => typeof v.checked === "undefined" || v.checked)
-        .map((item) => {
+        .map((item, i) => {
           return {
-            key: item.name,
+            key: `${item.name}_${i}`,
             label: item.name,
             children: (
               <FormContent

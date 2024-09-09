@@ -29,6 +29,7 @@ export default function Home() {
   const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
+  const [network, setNetwork] = useState<string>("");
 
   const [contractAbi, setContractAbi] = useState<{
     readAbi: AbiItem[];
@@ -37,10 +38,10 @@ export default function Home() {
 
   const { message } = App.useApp();
 
-  const onSearchContract = async (address: string) => {
+  const onSearchContract = async (address: string, network: string) => {
     try {
       const { data } = await axios.get(`/api/getAbi`, {
-        params: { address },
+        params: { address, network: network },
       });
 
       if (data.status !== "1") {
@@ -54,6 +55,7 @@ export default function Home() {
       );
       console.log("contract abi", orginalContractAbi.current);
       setCurrentAddress(address);
+      setNetwork(network);
       setContractAbi({ readAbi, writeAbi });
       setMyEthers(null);
       return true;
@@ -84,6 +86,7 @@ export default function Home() {
     <>
       <Header
         currentAddress={currentAddress}
+        network={network}
         onSearchContract={onSearchContract}
       ></Header>
       <div style={{ padding: 20 }}>
@@ -95,7 +98,7 @@ export default function Home() {
             contractAbi={contractAbi}
           ></Setting>
 
-          <Code currentAddress={currentAddress}></Code>
+          <Code currentAddress={currentAddress} network={network}></Code>
 
           <Connect
             connectMetaMask={onConnectMetaMask}

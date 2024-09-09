@@ -8,7 +8,13 @@ interface CodeList {
   name: string;
 }
 
-const Code = ({ currentAddress }: { currentAddress: string }) => {
+const Code = ({
+  currentAddress,
+  network,
+}: {
+  currentAddress: string;
+  network: string;
+}) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [codeList, setCodeList] = useState<CodeList[] | null>(null);
 
@@ -21,7 +27,7 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
   const getSourceCode = async () => {
     if (!currentAddress) return;
     const { data } = await axios.get(`/api/getSourceCode`, {
-      params: { address: currentAddress },
+      params: { address: currentAddress, network: network },
     });
     if (data.status !== "1") {
       message.error(data.result);

@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
+import { NetworkOrigin } from "../index";
 import axios from "axios";
 
-import { list1 } from "./mock";
-
 export async function GET(request) {
-  // return NextResponse.json({ status: "1", result: JSON.stringify(list1) });
-
   const url = new URL(request.url);
   const address = url.searchParams.get("address");
+  const network = url.searchParams.get("network");
 
-  const APIKEY = process.env.APIKEY;
-  const ETHERSCAN_URL = process.env.ETHERSCAN_URL;
+  const { ORIGIN, APIKEY } = NetworkOrigin[network];
 
-  const fetchUrl = `${ETHERSCAN_URL}?module=contract&action=getabi&address=${address}&apikey=${APIKEY}`;
+  const fetchUrl = `${ORIGIN}?module=contract&action=getabi&address=${address}&apikey=${APIKEY}`;
   console.log("fetchUrl", fetchUrl);
 
   const { data } = await axios.get(fetchUrl);

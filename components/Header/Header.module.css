@@ -5,9 +5,16 @@
   color: #fff !important;
   font-size: 18px;
 }
+.header span {
+  margin: 0 30px;
+}
 
 .updataBtn {
   padding: 10px 30px;
   cursor: pointer;
   color: #1677ff;
+}
+
+.submitBtn {
+  float: right;
 }
