@@ -52,7 +52,9 @@ const FormContent = ({
       const data = await action.apply(null, params);
       setResult(data);
     } catch (error) {
-      console.error(error);
+      //@ts-ignore
+      message.error(error.message);
+      console.log(error);
     }
   };
 

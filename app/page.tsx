@@ -29,7 +29,7 @@ export default function Home() {
   const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [network, setNetwork] = useState<Network | undefined>();
+  const [network, setNetwork] = useState<Network>(1);
 
   const [contractAbi, setContractAbi] = useState<{
     readAbi: AbiItem[];
@@ -41,7 +41,7 @@ export default function Home() {
   const onSearchContract = async (address: string, network: Network) => {
     try {
       const { data } = await axios.get(`/api/getAbi`, {
-        params: { address, network: network },
+        params: { address, network },
       });
 
       if (data.status !== "1") {

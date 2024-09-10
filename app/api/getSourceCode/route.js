@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { NetworkOrigin } from "../index";
 import axios from "axios";
 
-//Max rate limit reached, please use API Key for higher rate limit  【ps: dev key】
+//Max rate limit reached, please use API Key for higher rate limit  【 dev key】
 const getLoopData = async (fetchUrl) => {
   const res = await axios.get(fetchUrl);
   if (
@@ -25,7 +25,7 @@ export async function GET(request) {
   const { ORIGIN, APIKEY } = NetworkOrigin[network];
 
   const fetchUrl = `${ORIGIN}?module=contract&action=getsourcecode&address=${address}&apikey=${APIKEY}`;
-  console.log("fetchUrl", fetchUrl);
+  console.log("fetchUrl-----", fetchUrl);
 
   const { data } = await getLoopData(fetchUrl);
   return NextResponse.json(data);

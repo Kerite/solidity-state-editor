@@ -6,7 +6,7 @@ import style from "./Header.module.css";
 
 interface _Prop {
   currentAddress: string | undefined;
-  network: Network | undefined;
+  network: Network;
   onSearchContract: (address: string, network: Network) => Promise<boolean>;
 }
 
@@ -59,63 +59,68 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
   const [form] = Form.useForm();
   const [tags, setTags] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (!currentAddress) {
-      setVisible(true);
-    }
-    const _tags = localStorage.getItem("addressList") || "[]";
+  const getStorageAddressList = () => {
+    const _tags = localStorage.getItem(`address_${network}`) || "[]";
     setTags(JSON.parse(_tags));
-  }, []);
+  };
+  const setStorageAddressList = (_tags: string[]) => {
+    localStorage.setItem(`address_${network}`, JSON.stringify(_tags));
+    setTags(_tags);
+  };
+
+  const switchModalVisible = () => setVisible(!visible);
+
+  const onChangeEnv = () => {
+    getStorageAddressList();
+  };
 
   const onSubmit = () => {
     form.validateFields().then(async (res) => {
       setLoading(true);
       const result = await onSearchContract(res.address, res.network);
-      if (result) {
-        toggleModal();
-        const _tags = Array.from(new Set([...tags, res.address]));
-        setTags(_tags);
-        localStorage.setItem("addressList", JSON.stringify(_tags));
-      }
       setLoading(false);
+
+      if (!result) return;
+      const _tags = Array.from(new Set([...tags, res.address]));
+      setStorageAddressList(_tags);
+      switchModalVisible();
     });
   };
 
-  const toggleModal = () => setVisible(!visible);
-
-  const onSetFaild = (tag: string) => {
-    if (currentAddress === tag) return;
-
-    form.setFieldValue("address", tag);
+  const onSetFaild = (_tag: string) => {
+    if (currentAddress === _tag) return;
+    form.setFieldValue("address", _tag);
     setTimeout(onSubmit);
   };
-  const onRemoveTag = (tag: string) => {
-    const _tags = tags.filter((_tag) => _tag !== tag);
-    localStorage.setItem("addressList", JSON.stringify(_tags));
-    setTags(_tags);
+
+  const onRemoveTag = (_tag: string) => {
+    const _tags = tags.filter((_t) => _t !== _tag);
+    setStorageAddressList(_tags);
   };
 
   useEffect(() => {
-    if (!visible) {
-      setLoading(false);
-    }
-  }, [visible]);
+    if (!currentAddress) setVisible(true);
+    getStorageAddressList();
+  }, []);
 
   return (
     <>
       <Layout.Header className={style.header}>
         <div>
           <span>
-            ENV:
+            <strong>Env:</strong>
             {(network &&
               NETWORK_OPTIONS.find((v) => v.value === Number(network))
                 ?.label) ||
               "--"}
           </span>
-          <span>Address:{currentAddress || "--"}</span>
+          <span>
+            <strong>Address:</strong>
+            {currentAddress || "--"}
+          </span>
         </div>
 
-        <Button size="large" type="primary" onClick={toggleModal}>
+        <Button size="large" type="primary" onClick={switchModalVisible}>
           Edit
         </Button>
       </Layout.Header>
@@ -124,12 +129,13 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
         title="Edit contract address."
         open={visible}
         keyboard
-        onCancel={toggleModal}
+        onCancel={switchModalVisible}
         footer={null}
       >
         <Form
           style={{ padding: "30px 0" }}
           form={form}
+          onChange={onChangeEnv}
           initialValues={{
             network: network || 1,
             address: currentAddress || "",

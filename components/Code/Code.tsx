@@ -14,7 +14,7 @@ const Code = ({
   network,
 }: {
   currentAddress: string;
-  network: Network | undefined;
+  network: Network;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [codeList, setCodeList] = useState<CodeList[] | undefined>();
@@ -28,7 +28,7 @@ const Code = ({
   const getSourceCode = async () => {
     if (!currentAddress) return;
     const { data } = await axios.get(`/api/getSourceCode`, {
-      params: { address: currentAddress, network: network },
+      params: { address: currentAddress, network },
     });
     if (data.status !== "1") {
       message.error(data.result);
@@ -36,6 +36,7 @@ const Code = ({
     }
     try {
       const sourceCode: string = data.result?.[0]?.SourceCode;
+      //TODO
       if (sourceCode && sourceCode.startsWith("{{")) {
         const codeData = JSON.parse(
           String(sourceCode).slice(1, sourceCode.length - 1)
@@ -44,7 +45,6 @@ const Code = ({
           name: v,
           code: codeData.sources[v].content,
         }));
-        console.log(_list);
         setCodeList(_list);
       } else {
         setCodeList([
@@ -77,7 +77,7 @@ const Code = ({
         width={"60%"}
         title="Source Code"
         onCancel={toggleModal}
-        onClose={toggleModal}
+        footer={null}
         open={visible}
       >
         <Tabs

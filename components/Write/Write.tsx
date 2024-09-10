@@ -6,7 +6,7 @@ import type { AbiItem } from "@/units/index";
 interface _Prop {
   list: AbiItem[];
   contract?: any;
-  network: Network | undefined;
+  network: Network;
 }
 
 const Label = ({ name, type }: { name: string; type: string }) => {
