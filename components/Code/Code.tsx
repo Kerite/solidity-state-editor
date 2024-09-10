@@ -1,6 +1,7 @@
 import { App, Button, Modal, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { FileWordOutlined } from "@ant-design/icons";
+import { NetworkOrigin, Network } from "../Header/Header";
 import axios from "axios";
 
 interface CodeList {
@@ -13,10 +14,10 @@ const Code = ({
   network,
 }: {
   currentAddress: string;
-  network: string;
+  network: Network | undefined;
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const [codeList, setCodeList] = useState<CodeList[] | null>(null);
+  const [codeList, setCodeList] = useState<CodeList[] | undefined>();
 
   const { message } = App.useApp();
 

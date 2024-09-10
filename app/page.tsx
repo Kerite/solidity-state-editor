@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { ethers } from "ethers";
 import { App, Tabs } from "antd";
 import { ReadOutlined, EditOutlined } from "@ant-design/icons";
-import Header from "@/components/Header/Header";
+import Header, { Network } from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
@@ -29,7 +29,7 @@ export default function Home() {
   const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
   const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [network, setNetwork] = useState<string>("");
+  const [network, setNetwork] = useState<Network | undefined>();
 
   const [contractAbi, setContractAbi] = useState<{
     readAbi: AbiItem[];
@@ -38,7 +38,7 @@ export default function Home() {
 
   const { message } = App.useApp();
 
-  const onSearchContract = async (address: string, network: string) => {
+  const onSearchContract = async (address: string, network: Network) => {
     try {
       const { data } = await axios.get(`/api/getAbi`, {
         params: { address, network: network },
@@ -126,6 +126,7 @@ export default function Home() {
               key: "2",
               children: (
                 <Write
+                  network={network}
                   list={contractAbi.writeAbi}
                   contract={myEthers?.contract}
                 ></Write>

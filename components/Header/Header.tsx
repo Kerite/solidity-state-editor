@@ -6,11 +6,11 @@ import style from "./Header.module.css";
 
 interface _Prop {
   currentAddress: string | undefined;
-  network: string | undefined;
-  onSearchContract: (address: string, network: string) => Promise<boolean>;
+  network: Network | undefined;
+  onSearchContract: (address: string, network: Network) => Promise<boolean>;
 }
 
-enum Network {
+export enum Network {
   Ethereum,
   EthereumSepolia,
   BNB,
@@ -70,7 +70,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
   const onSubmit = () => {
     form.validateFields().then(async (res) => {
       setLoading(true);
-      const result = await onSearchContract(res.address, String(res.network));
+      const result = await onSearchContract(res.address, res.network);
       if (result) {
         toggleModal();
         const _tags = Array.from(new Set([...tags, res.address]));
@@ -107,7 +107,9 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
         <div>
           <span>
             ENV:
-            {NETWORK_OPTIONS.find((v) => v.value === Number(network))?.label ||
+            {(network &&
+              NETWORK_OPTIONS.find((v) => v.value === Number(network))
+                ?.label) ||
               "--"}
           </span>
           <span>Address:{currentAddress || "--"}</span>
@@ -162,10 +164,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
             Submit
           </Button>
         </Form>
-        <h4>
-          {form.getFieldValue("network")} History:{tags.length === 0 && "--"}
-          {form.getFieldValue("network")}
-        </h4>
+        <h4>History:{tags.length === 0 && "--"}</h4>
         {tags.map((tag) => {
           return (
             <Tag

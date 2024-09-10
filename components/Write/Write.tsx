@@ -1,10 +1,12 @@
 import { Collapse, Form, Input, Button, App } from "antd";
 import { useState } from "react";
+import { NetworkOrigin, Network } from "../Header/Header";
 import type { AbiItem } from "@/units/index";
 
 interface _Prop {
   list: AbiItem[];
   contract?: any;
+  network: Network | undefined;
 }
 
 const Label = ({ name, type }: { name: string; type: string }) => {
@@ -20,10 +22,12 @@ const FormContent = ({
   inputs,
   contract,
   name,
+  origin,
 }: {
   name: AbiItem["name"];
   inputs: AbiItem["inputs"];
   contract: any;
+  origin: string;
 }) => {
   const [form] = Form.useForm();
   const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]); // 交易记录
@@ -94,10 +98,7 @@ const FormContent = ({
         {txList.map((v) => (
           <div key={v.hash}>
             hash:
-            <a
-              target="_blank"
-              href={`https://sepolia.etherscan.io/tx/${v.hash}`}
-            >
+            <a target="_blank" href={`${origin}/tx/${v.hash}`}>
               {v.hash}
             </a>
           </div>
@@ -107,7 +108,8 @@ const FormContent = ({
   );
 };
 
-const Write = ({ list, contract }: _Prop) => {
+const Write = ({ list, contract, network }: _Prop) => {
+  const origin = (network && NetworkOrigin[network].origin) || "";
   return (
     <Collapse
       items={list
@@ -118,6 +120,7 @@ const Write = ({ list, contract }: _Prop) => {
             label: item.name,
             children: (
               <FormContent
+                origin={origin}
                 inputs={item.inputs}
                 contract={contract}
                 name={item.name}
