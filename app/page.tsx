@@ -17,6 +17,8 @@ import axios from "axios";
 import { formatContractAbi } from "@/units/index";
 import type { AbiItem } from "@/units/index";
 
+import { Network, NetworkOrigin } from "@/config/index";
+
 interface MyEthers {
   provider: any;
   account?: string;
@@ -28,7 +30,8 @@ export default function Home() {
   const orginalContractAbi = useRef<AbiItem[]>([]);
   const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
-  const [currentAddress, setCurrentAddress] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [network, setNetwork] = useState<Network>(1);
 
   const [contractAbi, setContractAbi] = useState<{
     readAbi: AbiItem[];
@@ -37,10 +40,10 @@ export default function Home() {
 
   const { message } = App.useApp();
 
-  const onSearchContract = async (address: string) => {
+  const onSearchContract = async (address: string, network: Network) => {
     try {
       const { data } = await axios.get(`/api/getAbi`, {
-        params: { address },
+        params: { address, network },
       });
 
       if (data.status !== "1") {
@@ -53,7 +56,8 @@ export default function Home() {
         orginalContractAbi.current
       );
       console.log("contract abi", orginalContractAbi.current);
-      setCurrentAddress(address);
+      setAddress(address);
+      setNetwork(network);
       setContractAbi({ readAbi, writeAbi });
       setMyEthers(null);
       return true;
@@ -63,6 +67,18 @@ export default function Home() {
   };
 
   const onConnectMetaMask = async () => {
+    const { chainId } = NetworkOrigin[network];
+
+    try {
+      //@ts-ignore
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${chainId.toString(16)}` }],
+      });
+    } catch (error) {
+      message.error("cancel operation !");
+    }
+
     //@ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const [account] = await provider.send("eth_requestAccounts", []);
@@ -74,7 +90,7 @@ export default function Home() {
     };
 
     const contractABI: AbiItem[] = orginalContractAbi.current;
-    const contract = new ethers.Contract(currentAddress, contractABI, signer);
+    const contract = new ethers.Contract(address, contractABI, signer);
     obj.contract = contract;
 
     setMyEthers(obj);
@@ -83,7 +99,8 @@ export default function Home() {
   return (
     <>
       <Header
-        currentAddress={currentAddress}
+        address={address}
+        network={network}
         onSearchContract={onSearchContract}
       ></Header>
       <div style={{ padding: 20 }}>
@@ -95,7 +112,7 @@ export default function Home() {
             contractAbi={contractAbi}
           ></Setting>
 
-          <Code currentAddress={currentAddress}></Code>
+          <Code address={address} network={network}></Code>
 
           <Connect
             connectMetaMask={onConnectMetaMask}
@@ -123,6 +140,7 @@ export default function Home() {
               key: "2",
               children: (
                 <Write
+                  network={network}
                   list={contractAbi.writeAbi}
                   contract={myEthers?.contract}
                 ></Write>

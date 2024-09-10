@@ -45,14 +45,16 @@ const FormContent = ({
     }, []);
 
     if (!contract) {
-      message.error("please connest to MetaMask");
+      message.error("please connect to MetaMask");
       return;
     }
     try {
       const data = await action.apply(null, params);
       setResult(data);
     } catch (error) {
-      console.error(error);
+      //@ts-ignore
+      message.error(error.message);
+      console.log(error);
     }
   };
 
@@ -92,9 +94,9 @@ const Read = ({ list, contract }: _Prop) => {
     <Collapse
       items={list
         .filter((v) => typeof v.checked === "undefined" || v.checked)
-        .map((item) => {
+        .map((item, i) => {
           return {
-            key: item.name,
+            key: `${item.name}_${i}`,
             label: item.name,
             children: (
               <FormContent

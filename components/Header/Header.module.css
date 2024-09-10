@@ -2,12 +2,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #fff !important;
+
   font-size: 18px;
+}
+.header strong {
+  color: #1677ff;
+  padding-right: 6px;
+}
+.header span {
+  margin: 0 30px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .updataBtn {
   padding: 10px 30px;
   cursor: pointer;
   color: #1677ff;
+}
+
+.submitBtn {
+  float: right;
 }

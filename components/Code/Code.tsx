@@ -1,6 +1,7 @@
 import { App, Button, Modal, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { FileWordOutlined } from "@ant-design/icons";
+import { Network } from "@/config/index";
 import axios from "axios";
 
 interface CodeList {
@@ -8,9 +9,9 @@ interface CodeList {
   name: string;
 }
 
-const Code = ({ currentAddress }: { currentAddress: string }) => {
+const Code = ({ address, network }: { address: string; network: Network }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const [codeList, setCodeList] = useState<CodeList[] | null>(null);
+  const [codeList, setCodeList] = useState<CodeList[] | undefined>();
 
   const { message } = App.useApp();
 
@@ -19,9 +20,9 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
   };
 
   const getSourceCode = async () => {
-    if (!currentAddress) return;
+    if (!address) return;
     const { data } = await axios.get(`/api/getSourceCode`, {
-      params: { address: currentAddress },
+      params: { address: address, network },
     });
     if (data.status !== "1") {
       message.error(data.result);
@@ -29,6 +30,7 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
     }
     try {
       const sourceCode: string = data.result?.[0]?.SourceCode;
+      //TODO
       if (sourceCode && sourceCode.startsWith("{{")) {
         const codeData = JSON.parse(
           String(sourceCode).slice(1, sourceCode.length - 1)
@@ -37,7 +39,6 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
           name: v,
           code: codeData.sources[v].content,
         }));
-        console.log(_list);
         setCodeList(_list);
       } else {
         setCodeList([
@@ -54,14 +55,14 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
 
   useEffect(() => {
     getSourceCode();
-  }, [currentAddress]);
+  }, [address]);
 
   return (
     <>
       <Button
         style={{ margin: "0 20px" }}
         onClick={toggleModal}
-        disabled={!currentAddress}
+        disabled={!address}
       >
         <FileWordOutlined />
         View contract source code
@@ -70,7 +71,7 @@ const Code = ({ currentAddress }: { currentAddress: string }) => {
         width={"60%"}
         title="Source Code"
         onCancel={toggleModal}
-        onClose={toggleModal}
+        footer={null}
         open={visible}
       >
         <Tabs
