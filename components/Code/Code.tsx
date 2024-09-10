@@ -1,7 +1,7 @@
 import { App, Button, Modal, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { FileWordOutlined } from "@ant-design/icons";
-import { NetworkOrigin, Network } from "../Header/Header";
+import { Network } from "@/config/index";
 import axios from "axios";
 
 interface CodeList {
@@ -9,13 +9,7 @@ interface CodeList {
   name: string;
 }
 
-const Code = ({
-  currentAddress,
-  network,
-}: {
-  currentAddress: string;
-  network: Network;
-}) => {
+const Code = ({ address, network }: { address: string; network: Network }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [codeList, setCodeList] = useState<CodeList[] | undefined>();
 
@@ -26,9 +20,9 @@ const Code = ({
   };
 
   const getSourceCode = async () => {
-    if (!currentAddress) return;
+    if (!address) return;
     const { data } = await axios.get(`/api/getSourceCode`, {
-      params: { address: currentAddress, network },
+      params: { address: address, network },
     });
     if (data.status !== "1") {
       message.error(data.result);
@@ -61,14 +55,14 @@ const Code = ({
 
   useEffect(() => {
     getSourceCode();
-  }, [currentAddress]);
+  }, [address]);
 
   return (
     <>
       <Button
         style={{ margin: "0 20px" }}
         onClick={toggleModal}
-        disabled={!currentAddress}
+        disabled={!address}
       >
         <FileWordOutlined />
         View contract source code

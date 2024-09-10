@@ -45,7 +45,7 @@ const FormContent = ({
     }, []);
 
     if (!contract) {
-      message.error("please connest to MetaMask");
+      message.error("please connect to MetaMask");
       return;
     }
     try {

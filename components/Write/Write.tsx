@@ -1,6 +1,6 @@
 import { Collapse, Form, Input, Button, App } from "antd";
 import { useState } from "react";
-import { NetworkOrigin, Network } from "../Header/Header";
+import { NetworkOrigin, Network } from "@/config/index";
 import type { AbiItem } from "@/units/index";
 
 interface _Prop {
@@ -45,7 +45,7 @@ const FormContent = ({
     }, []);
 
     if (!contract) {
-      message.error("please connest to MetaMask");
+      message.error("please connect to MetaMask");
       return;
     }
 

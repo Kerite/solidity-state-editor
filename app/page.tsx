@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { ethers } from "ethers";
 import { App, Tabs } from "antd";
 import { ReadOutlined, EditOutlined } from "@ant-design/icons";
-import Header, { Network } from "@/components/Header/Header";
+import Header from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
@@ -17,6 +17,8 @@ import axios from "axios";
 import { formatContractAbi } from "@/units/index";
 import type { AbiItem } from "@/units/index";
 
+import { Network, NetworkOrigin } from "@/config/index";
+
 interface MyEthers {
   provider: any;
   account?: string;
@@ -28,7 +30,7 @@ export default function Home() {
   const orginalContractAbi = useRef<AbiItem[]>([]);
   const [myEthers, setMyEthers] = useState<MyEthers | null>();
 
-  const [currentAddress, setCurrentAddress] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
   const [network, setNetwork] = useState<Network>(1);
 
   const [contractAbi, setContractAbi] = useState<{
@@ -54,7 +56,7 @@ export default function Home() {
         orginalContractAbi.current
       );
       console.log("contract abi", orginalContractAbi.current);
-      setCurrentAddress(address);
+      setAddress(address);
       setNetwork(network);
       setContractAbi({ readAbi, writeAbi });
       setMyEthers(null);
@@ -65,6 +67,18 @@ export default function Home() {
   };
 
   const onConnectMetaMask = async () => {
+    const { chainId } = NetworkOrigin[network];
+
+    try {
+      //@ts-ignore
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${chainId.toString(16)}` }],
+      });
+    } catch (error) {
+      message.error("cancel operation !");
+    }
+
     //@ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const [account] = await provider.send("eth_requestAccounts", []);
@@ -76,7 +90,7 @@ export default function Home() {
     };
 
     const contractABI: AbiItem[] = orginalContractAbi.current;
-    const contract = new ethers.Contract(currentAddress, contractABI, signer);
+    const contract = new ethers.Contract(address, contractABI, signer);
     obj.contract = contract;
 
     setMyEthers(obj);
@@ -85,7 +99,7 @@ export default function Home() {
   return (
     <>
       <Header
-        currentAddress={currentAddress}
+        address={address}
         network={network}
         onSearchContract={onSearchContract}
       ></Header>
@@ -98,7 +112,7 @@ export default function Home() {
             contractAbi={contractAbi}
           ></Setting>
 
-          <Code currentAddress={currentAddress} network={network}></Code>
+          <Code address={address} network={network}></Code>
 
           <Connect
             connectMetaMask={onConnectMetaMask}

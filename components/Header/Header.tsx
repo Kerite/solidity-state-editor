@@ -2,35 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Input, Modal, Layout, Form, Tag, Select, Button } from "antd";
+import { Network } from "@/config/index";
 import style from "./Header.module.css";
 
 interface _Prop {
-  currentAddress: string | undefined;
+  address: string | undefined;
   network: Network;
   onSearchContract: (address: string, network: Network) => Promise<boolean>;
 }
-
-export enum Network {
-  Ethereum,
-  EthereumSepolia,
-  BNB,
-  BNBBSc,
-}
-
-export const NetworkOrigin = {
-  [Network.Ethereum]: {
-    origin: "https://etherscan.io/",
-  },
-  [Network.EthereumSepolia]: {
-    origin: "https://sepolia.etherscan.io/",
-  },
-  [Network.BNB]: {
-    origin: "https://bscscan.com/",
-  },
-  [Network.BNBBSc]: {
-    origin: "https://testnet.bscscan.com/",
-  },
-};
 
 const NETWORK_OPTIONS = [
   {
@@ -51,7 +30,7 @@ const NETWORK_OPTIONS = [
   },
 ];
 
-const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
+const Header = ({ address, network, onSearchContract }: _Prop) => {
   const [form] = Form.useForm();
 
   const [visible, setVisible] = useState<boolean>(false);
@@ -92,7 +71,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
   };
 
   const onSetFaild = (_tag: string) => {
-    if (currentAddress === _tag) return;
+    if (address === _tag) return;
     form.setFieldValue("address", _tag);
     setTimeout(onSubmit);
   };
@@ -103,7 +82,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
   };
 
   useEffect(() => {
-    if (!currentAddress) setVisible(true);
+    if (!address) setVisible(true);
     getStorageAddressList();
   }, []);
 
@@ -118,7 +97,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
           </span>
           <span>
             <strong>Address:</strong>
-            {currentAddress || "--"}
+            {address || "--"}
           </span>
         </div>
 
@@ -143,7 +122,7 @@ const Header = ({ currentAddress, network, onSearchContract }: _Prop) => {
           }}
           initialValues={{
             network: network || 1,
-            address: currentAddress || "",
+            address: address || "",
           }}
         >
           <Form.Item
