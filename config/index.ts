@@ -1,6 +1,6 @@
 "use client";
 
-const API_KEY_ETHERSCAN = "H9kWk0mQrYppFaXx8x2WCAORN_u3p_V_";
+const API_KEY_ETHERSCAN = process.env.NEXT_PUBLIC_API_KEY_ETHERSCAN;
 
 export enum Network {
   Ethereum = 1,
