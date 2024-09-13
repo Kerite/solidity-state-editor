@@ -1,5 +1,5 @@
 import { Collapse, Form, Input, Button, App } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NetworkOrigin, Network } from "@/config/index";
 import type { AbiItem } from "@/units/index";
 import { ethers } from "ethers";
@@ -122,19 +122,46 @@ const Write = ({
 
   const [contract, setContract] = useState<any>();
 
-  const [account, setAccount] = useState<string>("");
+  const [wallectData, setWallectData] = useState<{ balance: string; account: string; signer: any }>({
+    balance: "",
+    account: "",
+    signer: null,
+  });
 
-  const connectContract = async (signer: any) => {
-    const _account = await signer.getAddress();
+  const connectWallet = async (signer: any) => {
+    const account = await signer.getAddress();
+
+    const balance = ethers.utils.formatEther(await signer.getBalance());
+
+    setWallectData({
+      account,
+      balance,
+      signer,
+    });
+
     const _constract = new ethers.Contract(address, abiList, signer);
-
-    setAccount(_account);
     setContract(_constract);
   };
 
+  useEffect(() => {
+    setWallectData({
+      balance: "",
+      account: "",
+      signer: null,
+    });
+
+    setContract(null);
+  }, [abiList, address]);
+
   return (
     <>
-      <Connect account={account} network={network} connectContract={connectContract}></Connect>
+      <Connect
+        account={wallectData.account}
+        balance={wallectData.balance}
+        network={network}
+        connectWallet={connectWallet}
+      ></Connect>
+
       <Collapse
         items={abiList
           .filter((v) => checkedAbi.includes(v.name))

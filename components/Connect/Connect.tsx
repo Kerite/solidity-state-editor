@@ -1,20 +1,22 @@
 import { Network, NetworkOrigin } from "@/config";
 import { Button, App } from "antd";
 import { ethers } from "ethers";
-import { useState } from "react";
+import { switchNetwork } from "@/units/index";
 
 const Connect = ({
   network,
-  connectContract,
+  connectWallet,
   account,
+  balance,
 }: {
   network: Network;
   account: string;
-  connectContract: (e: any) => void;
+  balance: string;
+  connectWallet: (e: any) => void;
 }) => {
   const { message } = App.useApp();
 
-  const connectMetaMask = async () => {
+  const onConnectWalletToMetamask = async () => {
     //@ts-ignore
     const ethereum = window.ethereum;
     if (!ethereum) {
@@ -23,12 +25,8 @@ const Connect = ({
     }
 
     const { chainId } = NetworkOrigin[network];
-    try {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
-      });
-    } catch (error) {}
+
+    await switchNetwork(chainId);
 
     try {
       const provider = new ethers.providers.Web3Provider(ethereum);
@@ -37,21 +35,31 @@ const Connect = ({
 
       const signer = await provider.getSigner();
 
-      connectContract(signer);
+      connectWallet(signer);
     } catch (error) {}
   };
 
   return (
-    <Button onClick={connectMetaMask} danger={!account}>
-      <span
-        style={{
-          padding: 4,
-          background: `${account ? "greenyellow" : "red"}`,
-          borderRadius: "50%",
-        }}
-      ></span>
-      {account ? `Connected - web3 [account:${account}]` : "Connect to web3"}
-    </Button>
+    <>
+      <Button onClick={onConnectWalletToMetamask} danger={!account} style={{ marginBottom: 20 }}>
+        <span
+          style={{
+            padding: 4,
+            background: `${account ? "greenyellow" : "red"}`,
+            borderRadius: "50%",
+          }}
+        ></span>
+        {account ? `Connected - web3` : "Connect to web3"}
+      </Button>
+      <span style={{ margin: 20 }}>
+        <strong>Account: </strong>
+        {account || "--"}
+      </span>
+      <span>
+        <strong>Balance: </strong>
+        {balance || "--"}
+      </span>
+    </>
   );
 };
 

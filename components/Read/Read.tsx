@@ -114,7 +114,7 @@ const Read = ({
     const constract = new ethers.Contract(address, abiList, provider);
 
     setContract(constract);
-  }, [abiList]);
+  }, [abiList, address]);
 
   return (
     <Collapse
