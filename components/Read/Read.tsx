@@ -1,12 +1,10 @@
 import { Collapse, Form, Input, Button, App } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import formatRender from "./renderResult";
 import type { AbiItem } from "@/units/index";
+import { Network, NetworkOrigin } from "@/config";
 
-interface _Prop {
-  list: AbiItem[];
-  contract?: any;
-}
+import { ethers } from "ethers";
 
 const Label = ({ name, type }: { name: string; type: string }) => {
   return (
@@ -29,8 +27,12 @@ const FormContent = ({
   contract: any;
 }) => {
   const [form] = Form.useForm();
+
   const { message } = App.useApp();
+
   const [result, setResult] = useState();
+
+  const [loading, setLoading] = useState(false);
 
   const action = contract?.[name];
 
@@ -44,18 +46,19 @@ const FormContent = ({
       return [...pre, val];
     }, []);
 
-    if (!contract) {
-      message.error("please connect to MetaMask");
-      return;
-    }
-    try {
-      const data = await action.apply(null, params);
-      setResult(data);
-    } catch (error) {
-      //@ts-ignore
-      message.error(error.message);
-      console.log(error);
-    }
+    setLoading(true);
+
+    action
+      .apply(null, params)
+      .then(setResult)
+      .catch((error: Error) => {
+        //@ts-ignore
+        message.error(error.message);
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -75,34 +78,57 @@ const FormContent = ({
           );
         })}
       </Form>
-      <Button type="primary" size="small" onClick={onSubmit}>
+      <Button type="primary" size="small" onClick={onSubmit} loading={loading}>
         query
       </Button>
       <div>
         <p>
           <strong>query result</strong>
-          <span style={{ color: "#999" }}>{`[ ${outputs[0].type} ]`}</span>：
-          {formatRender(result, outputs)}
+          <span style={{ color: "#999" }}>{`[ ${outputs[0].type} ]`}</span>：{formatRender(result, outputs)}
         </p>
       </div>
     </>
   );
 };
 
-const Read = ({ list, contract }: _Prop) => {
+const Read = ({
+  abiList,
+  network,
+  address,
+  checkedAbi,
+}: {
+  abiList: AbiItem[];
+  network: Network;
+  address: string;
+  checkedAbi: string[];
+}) => {
+  const [contract, setContract] = useState<any>();
+
+  useEffect(() => {
+    if (!address || abiList.length === 0) return;
+
+    console.log("constract start connect...");
+
+    const { rpc } = NetworkOrigin[network];
+    const provider = new ethers.providers.JsonRpcProvider(rpc);
+    const constract = new ethers.Contract(address, abiList, provider);
+
+    setContract(constract);
+  }, [abiList]);
+
   return (
     <Collapse
-      items={list
-        .filter((v) => typeof v.checked === "undefined" || v.checked)
+      items={abiList
+        .filter((v) => checkedAbi.includes(v.name))
         .map((item, i) => {
           return {
             key: `${item.name}_${i}`,
             label: item.name,
             children: (
               <FormContent
+                contract={contract}
                 inputs={item.inputs}
                 outputs={item.outputs}
-                contract={contract}
                 name={item.name}
               ></FormContent>
             ),

@@ -2,12 +2,9 @@ import { Collapse, Form, Input, Button, App } from "antd";
 import { useState } from "react";
 import { NetworkOrigin, Network } from "@/config/index";
 import type { AbiItem } from "@/units/index";
+import { ethers } from "ethers";
 
-interface _Prop {
-  list: AbiItem[];
-  contract?: any;
-  network: Network;
-}
+import Connect from "../Connect/Connect";
 
 const Label = ({ name, type }: { name: string; type: string }) => {
   return (
@@ -30,9 +27,10 @@ const FormContent = ({
   origin: string;
 }) => {
   const [form] = Form.useForm();
-  const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]); // 交易记录
+
+  const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]);
+
   const { message } = App.useApp();
-  const action = contract?.[name];
 
   const onSubmit = async () => {
     const data = await form.validateFields();
@@ -49,6 +47,7 @@ const FormContent = ({
       return;
     }
 
+    const action = contract[name];
     try {
       const tx = await action.apply(null, params);
       console.log("Transaction:", tx);
@@ -108,27 +107,53 @@ const FormContent = ({
   );
 };
 
-const Write = ({ list, contract, network }: _Prop) => {
+const Write = ({
+  abiList,
+  network,
+  address,
+  checkedAbi,
+}: {
+  abiList: AbiItem[];
+  network: Network;
+  address: string;
+  checkedAbi: string[];
+}) => {
   const origin = (network && NetworkOrigin[network].origin) || "";
+
+  const [contract, setContract] = useState<any>();
+
+  const [account, setAccount] = useState<string>("");
+
+  const connectContract = async (signer: any) => {
+    const _account = await signer.getAddress();
+    const _constract = new ethers.Contract(address, abiList, signer);
+
+    setAccount(_account);
+    setContract(_constract);
+  };
+
   return (
-    <Collapse
-      items={list
-        .filter((v) => typeof v.checked === "undefined" || v.checked)
-        .map((item, i) => {
-          return {
-            key: `${item.name}_${i}`,
-            label: item.name,
-            children: (
-              <FormContent
-                origin={origin}
-                inputs={item.inputs}
-                contract={contract}
-                name={item.name}
-              ></FormContent>
-            ),
-          };
-        })}
-    />
+    <>
+      <Connect account={account} network={network} connectContract={connectContract}></Connect>
+      <Collapse
+        items={abiList
+          .filter((v) => checkedAbi.includes(v.name))
+          .map((item, i) => {
+            return {
+              key: `${item.name}_${i}`,
+              label: item.name,
+              children: (
+                <FormContent
+                  origin={origin}
+                  inputs={item.inputs}
+                  contract={contract}
+                  name={item.name}
+                ></FormContent>
+              ),
+            };
+          })}
+      />
+    </>
   );
 };
 

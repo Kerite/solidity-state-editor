@@ -1,12 +1,46 @@
-import { Button } from "antd";
+import { Network, NetworkOrigin } from "@/config";
+import { Button, App } from "antd";
+import { ethers } from "ethers";
+import { useState } from "react";
 
 const Connect = ({
-  connectMetaMask,
+  network,
+  connectContract,
   account,
 }: {
-  connectMetaMask: () => void;
-  account: string | undefined;
+  network: Network;
+  account: string;
+  connectContract: (e: any) => void;
 }) => {
+  const { message } = App.useApp();
+
+  const connectMetaMask = async () => {
+    //@ts-ignore
+    const ethereum = window.ethereum;
+    if (!ethereum) {
+      message.error("not find metamask");
+      return;
+    }
+
+    const { chainId } = NetworkOrigin[network];
+    try {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${chainId.toString(16)}` }],
+      });
+    } catch (error) {}
+
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
+
+      connectContract(signer);
+    } catch (error) {}
+  };
+
   return (
     <Button onClick={connectMetaMask} danger={!account}>
       <span

@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Input, Modal, Layout, Form, Tag, Select, Button } from "antd";
+import { useState, useEffect } from "react";
+import { Input, Modal, Layout, Form, Tag, Select, Button, App } from "antd";
+import axios from "axios";
 import { Network } from "@/config/index";
 import style from "./Header.module.css";
 
-interface _Prop {
+interface _Props {
   address: string | undefined;
   network: Network;
-  onSearchContract: (address: string, network: Network) => Promise<boolean>;
+  setNetork: (network: Network) => void;
+  initData: (abiResult: string, address: string) => void;
 }
 
 const NETWORK_OPTIONS = [
@@ -30,43 +32,43 @@ const NETWORK_OPTIONS = [
   },
 ];
 
-const Header = ({ address, network, onSearchContract }: _Prop) => {
+const Header = ({ address, network, setNetork, initData }: _Props) => {
   const [form] = Form.useForm();
+
+  const { message } = App.useApp();
 
   const [visible, setVisible] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [tags, setTags] = useState<string[]>([]);
-
-  const currentNetwork = useRef<Network>();
-
-  const getStorageAddressList = () => {
-    const _network =
-      typeof currentNetwork.current !== "undefined"
-        ? currentNetwork.current
-        : network;
-    const _tags = localStorage.getItem(`address_${_network}`) || "[]";
-    setTags(JSON.parse(_tags));
-  };
-  const setStorageAddressList = (_tags: string[]) => {
-    const _network = currentNetwork.current || network;
-    localStorage.setItem(`address_${_network}`, JSON.stringify(_tags));
-    setTags(_tags);
-  };
+  const [adderessHistoryTags, setAdderessHistoryTags] = useState<string[]>([]);
 
   const switchModalVisible = () => setVisible(!visible);
 
   const onSubmit = () => {
     form.validateFields().then(async (res) => {
-      setLoading(true);
-      const result = await onSearchContract(res.address, res.network);
-      setLoading(false);
+      try {
+        setLoading(true);
 
-      if (!result) return;
-      const _tags = Array.from(new Set([...tags, res.address]));
-      setStorageAddressList(_tags);
-      switchModalVisible();
+        const { data } = await axios.get(`/api/getAbi`, {
+          params: { address: res.address, network: res.network },
+        });
+
+        setLoading(false);
+
+        if (data.status !== "1") {
+          message.error(data.result);
+          return;
+        }
+
+        switchModalVisible();
+
+        initData(data.result, res.address);
+
+        setAdderessHistoryTags(Array.from(new Set([...adderessHistoryTags, res.address])));
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 
@@ -77,14 +79,27 @@ const Header = ({ address, network, onSearchContract }: _Prop) => {
   };
 
   const onRemoveTag = (_tag: string) => {
-    const _tags = tags.filter((_t) => _t !== _tag);
-    setStorageAddressList(_tags);
+    const _tags = adderessHistoryTags.filter((_t) => _t !== _tag);
+    setAdderessHistoryTags(_tags);
   };
 
   useEffect(() => {
     if (!address) setVisible(true);
-    getStorageAddressList();
   }, []);
+
+  useEffect(() => {
+    let _adderessHistoryTags = [...adderessHistoryTags];
+    try {
+      _adderessHistoryTags = JSON.parse(localStorage.getItem(`address_${network}`) || "[]");
+    } catch (error) {}
+    setAdderessHistoryTags(_adderessHistoryTags);
+
+    form.setFieldValue("address", "");
+  }, [network]);
+
+  useEffect(() => {
+    localStorage.setItem(`address_${network}`, JSON.stringify(adderessHistoryTags));
+  }, [adderessHistoryTags]);
 
   return (
     <>
@@ -92,8 +107,7 @@ const Header = ({ address, network, onSearchContract }: _Prop) => {
         <div>
           <span>
             <strong>Env:</strong>
-            {NETWORK_OPTIONS.find((v) => v.value === Number(network))?.label ||
-              "--"}
+            {NETWORK_OPTIONS.find((v) => v.value === Number(network))?.label || "--"}
           </span>
           <span>
             <strong>Address:</strong>
@@ -116,12 +130,9 @@ const Header = ({ address, network, onSearchContract }: _Prop) => {
         <Form
           style={{ padding: "30px 0" }}
           form={form}
-          onValuesChange={(_, allValues) => {
-            currentNetwork.current = allValues.network;
-            getStorageAddressList();
-          }}
+          onValuesChange={(_, allValues) => setNetork(allValues.network)}
           initialValues={{
-            network: network || 1,
+            network: network,
             address: address || "",
           }}
         >
@@ -130,11 +141,7 @@ const Header = ({ address, network, onSearchContract }: _Prop) => {
             label="network"
             rules={[{ required: true, message: "Please select network.!" }]}
           >
-            <Select
-              placeholder="Please select network."
-              allowClear
-              options={NETWORK_OPTIONS}
-            ></Select>
+            <Select placeholder="Please select network." options={NETWORK_OPTIONS}></Select>
           </Form.Item>
 
           <Form.Item
@@ -145,19 +152,14 @@ const Header = ({ address, network, onSearchContract }: _Prop) => {
             <Input placeholder="Please input address." allowClear></Input>
           </Form.Item>
 
-          <Button
-            type="primary"
-            loading={loading}
-            onClick={onSubmit}
-            className={style.submitBtn}
-          >
+          <Button type="primary" loading={loading} onClick={onSubmit} className={style.submitBtn}>
             Submit
           </Button>
         </Form>
         <h4>Current env History:</h4>
-        {tags.length === 0
+        {adderessHistoryTags.length === 0
           ? "--"
-          : tags.map((tag) => {
+          : adderessHistoryTags.map((tag) => {
               return (
                 <Tag
                   style={{ cursor: "pointer" }}
