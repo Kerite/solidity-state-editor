@@ -2,19 +2,39 @@ import { Network, NetworkOrigin } from "@/config";
 import { Button, App } from "antd";
 import { ethers } from "ethers";
 import { switchNetwork } from "@/units/index";
+import { useEffect, useState } from "react";
 
 const Connect = ({
   network,
-  connectWallet,
-  account,
-  balance,
+  signer,
+  setSigner,
 }: {
   network: Network;
-  account: string;
-  balance: string;
-  connectWallet: (e: any) => void;
+  signer: any;
+  setSigner: (e: any) => void;
 }) => {
   const { message } = App.useApp();
+
+  const [walletData, setWalletData] = useState<{ account: string; balance: string }>({
+    account: "",
+    balance: "",
+  });
+
+  const getWalletData = async () => {
+    if (!signer) {
+      setWalletData({ account: "", balance: "" });
+      return;
+    }
+    const account = signer.getAddress();
+
+    const balance = ethers.utils.formatEther(await signer.getBalance());
+
+    setWalletData({ account, balance });
+  };
+
+  useEffect(() => {
+    getWalletData();
+  }, [signer]);
 
   const onConnectWalletToMetamask = async () => {
     //@ts-ignore
@@ -35,10 +55,11 @@ const Connect = ({
 
       const signer = await provider.getSigner();
 
-      connectWallet(signer);
+      setSigner(signer);
     } catch (error) {}
   };
 
+  const { account, balance } = walletData;
   return (
     <>
       <Button onClick={onConnectWalletToMetamask} danger={!account} style={{ marginBottom: 20 }}>

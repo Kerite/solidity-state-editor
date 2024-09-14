@@ -4,7 +4,7 @@ import { NetworkOrigin, Network } from "@/config/index";
 import type { AbiItem } from "@/units/index";
 import { ethers } from "ethers";
 
-import Connect from "../Connect/Connect";
+import ConnectMetamask from "../ConnectMetamask/ConnectMetamask";
 
 const Label = ({ name, type }: { name: string; type: string }) => {
   return (
@@ -50,11 +50,9 @@ const FormContent = ({
     const action = contract[name];
     try {
       const tx = await action.apply(null, params);
-      console.log("Transaction:", tx);
       setTxList((_t) => [..._t, { hash: tx.hash, status: false }]);
       // 等待交易被确认
       const receipt = await tx.wait();
-      console.log("Transaction was confirmed in block", receipt);
       setTxList((_txList) => {
         return _txList.map((_newTxList) => {
           if (_newTxList.hash === tx.hash) {
@@ -122,45 +120,24 @@ const Write = ({
 
   const [contract, setContract] = useState<any>();
 
-  const [wallectData, setWallectData] = useState<{ balance: string; account: string; signer: any }>({
-    balance: "",
-    account: "",
-    signer: null,
-  });
-
-  const connectWallet = async (signer: any) => {
-    const account = await signer.getAddress();
-
-    const balance = ethers.utils.formatEther(await signer.getBalance());
-
-    setWallectData({
-      account,
-      balance,
-      signer,
-    });
-
-    const _constract = new ethers.Contract(address, abiList, signer);
-    setContract(_constract);
-  };
+  const [signer, setSigner] = useState<any>();
 
   useEffect(() => {
-    setWallectData({
-      balance: "",
-      account: "",
-      signer: null,
-    });
-
-    setContract(null);
+    setSigner(null);
   }, [abiList, address]);
+
+  useEffect(() => {
+    if (signer) {
+      const _constract = new ethers.Contract(address, abiList, signer);
+      setContract(_constract);
+    } else {
+      setContract(null);
+    }
+  }, [signer]);
 
   return (
     <>
-      <Connect
-        account={wallectData.account}
-        balance={wallectData.balance}
-        network={network}
-        connectWallet={connectWallet}
-      ></Connect>
+      <ConnectMetamask signer={signer} setSigner={setSigner} network={network}></ConnectMetamask>
 
       <Collapse
         items={abiList
