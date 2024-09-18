@@ -120,7 +120,7 @@ const Write = ({
 
   const [contract, setContract] = useState<any>();
 
-  const [signer, setSigner] = useState<any>();
+  const [signer, setSigner] = useState<any>(null);
 
   useEffect(() => {
     setSigner(null);

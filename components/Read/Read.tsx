@@ -107,8 +107,6 @@ const Read = ({
   useEffect(() => {
     if (!address || abiList.length === 0) return;
 
-    console.log("constract start connect...");
-
     const { rpc } = NetworkOrigin[network];
     const provider = new ethers.providers.JsonRpcProvider(rpc);
     const constract = new ethers.Contract(address, abiList, provider);

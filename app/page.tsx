@@ -31,9 +31,7 @@ export default function Home() {
       setContractAbi(contractABI);
 
       setAddress(_address);
-    } catch (error) {
-      console.log("initContract error", error);
-    }
+    } catch (error) {}
   };
 
   const { readAbi, writeAbi } = useMemo(() => {
