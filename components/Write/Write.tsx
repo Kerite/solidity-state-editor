@@ -1,13 +1,10 @@
 import { Collapse, Form, Input, Button, App } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NetworkOrigin, Network } from "@/config/index";
 import type { AbiItem } from "@/units/index";
+import { ethers } from "ethers";
 
-interface _Prop {
-  list: AbiItem[];
-  contract?: any;
-  network: Network;
-}
+import ConnectMetamask from "../ConnectMetamask/ConnectMetamask";
 
 const Label = ({ name, type }: { name: string; type: string }) => {
   return (
@@ -30,9 +27,10 @@ const FormContent = ({
   origin: string;
 }) => {
   const [form] = Form.useForm();
-  const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]); // 交易记录
+
+  const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]);
+
   const { message } = App.useApp();
-  const action = contract?.[name];
 
   const onSubmit = async () => {
     const data = await form.validateFields();
@@ -49,13 +47,12 @@ const FormContent = ({
       return;
     }
 
+    const action = contract[name];
     try {
       const tx = await action.apply(null, params);
-      console.log("Transaction:", tx);
       setTxList((_t) => [..._t, { hash: tx.hash, status: false }]);
       // 等待交易被确认
       const receipt = await tx.wait();
-      console.log("Transaction was confirmed in block", receipt);
       setTxList((_txList) => {
         return _txList.map((_newTxList) => {
           if (_newTxList.hash === tx.hash) {
@@ -108,27 +105,59 @@ const FormContent = ({
   );
 };
 
-const Write = ({ list, contract, network }: _Prop) => {
+const Write = ({
+  abiList,
+  network,
+  address,
+  checkedAbi,
+}: {
+  abiList: AbiItem[];
+  network: Network;
+  address: string;
+  checkedAbi: string[];
+}) => {
   const origin = (network && NetworkOrigin[network].origin) || "";
+
+  const [contract, setContract] = useState<any>();
+
+  const [signer, setSigner] = useState<any>();
+
+  useEffect(() => {
+    setSigner(null);
+  }, [abiList, address]);
+
+  useEffect(() => {
+    if (signer) {
+      const _constract = new ethers.Contract(address, abiList, signer);
+      setContract(_constract);
+    } else {
+      setContract(null);
+    }
+  }, [signer]);
+
   return (
-    <Collapse
-      items={list
-        .filter((v) => typeof v.checked === "undefined" || v.checked)
-        .map((item, i) => {
-          return {
-            key: `${item.name}_${i}`,
-            label: item.name,
-            children: (
-              <FormContent
-                origin={origin}
-                inputs={item.inputs}
-                contract={contract}
-                name={item.name}
-              ></FormContent>
-            ),
-          };
-        })}
-    />
+    <>
+      <ConnectMetamask signer={signer} setSigner={setSigner} network={network}></ConnectMetamask>
+
+      <Collapse
+        items={abiList
+          .filter((v) => checkedAbi.includes(v.name))
+          .map((item, i) => {
+            return {
+              key: `${item.name}_${i}`,
+              label: item.name,
+              children: (
+                <FormContent
+                  origin={origin}
+                  inputs={item.inputs}
+                  contract={contract}
+                  name={item.name}
+                ></FormContent>
+              ),
+            };
+          })}
+      />
+    </>
   );
 };
 

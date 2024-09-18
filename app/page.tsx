@@ -1,8 +1,6 @@
 "use client";
-
-import { useRef, useState } from "react";
-import { ethers } from "ethers";
-import { App, Tabs } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { Tabs } from "antd";
 import { ReadOutlined, EditOutlined } from "@ant-design/icons";
 import Header from "@/components/Header/Header";
 
@@ -10,114 +8,57 @@ import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
 import Read from "@/components/Read/Read";
 import Write from "@/components/Write/Write";
-import Connect from "@/components/Connect/Connect";
 
-import axios from "axios";
-
-import { formatContractAbi } from "@/units/index";
-import type { AbiItem } from "@/units/index";
-
-import { Network, NetworkOrigin } from "@/config/index";
-
-interface MyEthers {
-  provider: any;
-  account?: string;
-  signer?: any;
-  contract?: any;
-}
+import { formatContractAbi, AbiItem } from "@/units/index";
+import { Network } from "@/config/index";
 
 export default function Home() {
-  const orginalContractAbi = useRef<AbiItem[]>([]);
-  const [myEthers, setMyEthers] = useState<MyEthers | null>();
-
   const [address, setAddress] = useState<string>("");
-  const [network, setNetwork] = useState<Network>(1);
 
-  const [contractAbi, setContractAbi] = useState<{
-    readAbi: AbiItem[];
-    writeAbi: AbiItem[];
-  }>({ readAbi: [], writeAbi: [] });
+  const [network, setNetwork] = useState<Network>(2);
 
-  const { message } = App.useApp();
+  const [contractAbi, setContractAbi] = useState<AbiItem[]>([]);
 
-  const onSearchContract = async (address: string, network: Network) => {
+  const [checkedAbi, setCheckedAbi] = useState<{ readAbi: string[]; writeAbi: string[] }>({
+    readAbi: [],
+    writeAbi: [],
+  });
+
+  const initData = async (result: string, _address: string) => {
     try {
-      const { data } = await axios.get(`/api/getAbi`, {
-        params: { address, network },
-      });
+      const contractABI = JSON.parse(result);
 
-      if (data.status !== "1") {
-        message.error(data.result);
-        return false;
-      }
+      setContractAbi(contractABI);
 
-      orginalContractAbi.current = JSON.parse(data.result);
-      const { readAbi, writeAbi } = formatContractAbi(
-        orginalContractAbi.current
-      );
-      console.log("contract abi", orginalContractAbi.current);
-      setAddress(address);
-      setNetwork(network);
-      setContractAbi({ readAbi, writeAbi });
-      setMyEthers(null);
-      return true;
+      setAddress(_address);
     } catch (error) {
-      return false;
+      console.log("initContract error", error);
     }
   };
 
-  const onConnectMetaMask = async () => {
-    const { chainId } = NetworkOrigin[network];
+  const { readAbi, writeAbi } = useMemo(() => {
+    return formatContractAbi(contractAbi);
+  }, [contractAbi]);
 
-    try {
-      //@ts-ignore
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
-      });
-    } catch (error) {
-      message.error("cancel operation !");
-    }
-
-    //@ts-ignore
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const [account] = await provider.send("eth_requestAccounts", []);
-    const signer = await provider.getSigner();
-    const obj: MyEthers = {
-      provider,
-      account,
-      signer,
-    };
-
-    const contractABI: AbiItem[] = orginalContractAbi.current;
-    const contract = new ethers.Contract(address, contractABI, signer);
-    obj.contract = contract;
-
-    setMyEthers(obj);
-  };
+  useEffect(() => {
+    setCheckedAbi({
+      readAbi: readAbi.map((abi) => abi.name),
+      writeAbi: writeAbi.map((abi) => abi.name),
+    });
+  }, [contractAbi]);
 
   return (
     <>
-      <Header
-        address={address}
-        network={network}
-        onSearchContract={onSearchContract}
-      ></Header>
+      <Header address={address} network={network} setNetork={setNetwork} initData={initData}></Header>
       <div style={{ padding: 20 }}>
-        <div
-          style={{ margin: "0 0 20px", display: "flex", alignItems: "center" }}
-        >
+        <div style={{ margin: "0 0 20px", display: "flex", alignItems: "center" }}>
           <Setting
-            setContractAbi={setContractAbi}
-            contractAbi={contractAbi}
+            contractAbi={{ readAbi, writeAbi }}
+            checkedAbi={checkedAbi}
+            setCheckedAbi={setCheckedAbi}
           ></Setting>
 
           <Code address={address} network={network}></Code>
-
-          <Connect
-            connectMetaMask={onConnectMetaMask}
-            account={myEthers?.account}
-          ></Connect>
         </div>
 
         <Tabs
@@ -129,8 +70,10 @@ export default function Home() {
               key: "1",
               children: (
                 <Read
-                  list={contractAbi.readAbi}
-                  contract={myEthers?.contract}
+                  address={address}
+                  network={network}
+                  abiList={readAbi}
+                  checkedAbi={checkedAbi.readAbi}
                 ></Read>
               ),
             },
@@ -140,9 +83,10 @@ export default function Home() {
               key: "2",
               children: (
                 <Write
+                  address={address}
                   network={network}
-                  list={contractAbi.writeAbi}
-                  contract={myEthers?.contract}
+                  abiList={writeAbi}
+                  checkedAbi={checkedAbi.writeAbi}
                 ></Write>
               ),
             },
