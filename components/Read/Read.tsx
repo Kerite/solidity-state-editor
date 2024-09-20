@@ -1,6 +1,6 @@
 import { Collapse, Form, Input, Button, App } from "antd";
 import { useEffect, useState } from "react";
-import formatRender from "./renderResult";
+import formatRender from "@/units/formatRead";
 import type { AbiItem } from "@/units/index";
 import { Network, NetworkOrigin } from "@/config";
 
