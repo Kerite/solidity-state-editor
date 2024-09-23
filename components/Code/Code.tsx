@@ -32,9 +32,7 @@ const Code = ({ address, network }: { address: string; network: Network }) => {
       const sourceCode: string = data.result?.[0]?.SourceCode;
       //TODO
       if (sourceCode && sourceCode.startsWith("{{")) {
-        const codeData = JSON.parse(
-          String(sourceCode).slice(1, sourceCode.length - 1)
-        );
+        const codeData = JSON.parse(String(sourceCode).slice(1, sourceCode.length - 1));
         const _list = Object.keys(codeData.sources).map((v) => ({
           name: v,
           code: codeData.sources[v].content,
@@ -59,21 +57,11 @@ const Code = ({ address, network }: { address: string; network: Network }) => {
 
   return (
     <>
-      <Button
-        style={{ margin: "0 20px" }}
-        onClick={toggleModal}
-        disabled={!address}
-      >
+      <Button style={{ margin: "0 20px" }} onClick={toggleModal} disabled={!address}>
         <FileWordOutlined />
         View contract source code
       </Button>
-      <Modal
-        width={"60%"}
-        title="Source Code"
-        onCancel={toggleModal}
-        footer={null}
-        open={visible}
-      >
+      <Modal width={"60%"} title="Source Code" onCancel={toggleModal} footer={null} open={visible}>
         <Tabs
           items={codeList?.map((codeItem) => {
             return {

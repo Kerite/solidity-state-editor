@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs } from "antd";
-import { ReadOutlined, EditOutlined } from "@ant-design/icons";
+import { ReadOutlined, EditOutlined, StrikethroughOutlined } from "@ant-design/icons";
 import Header from "@/components/Header/Header";
 
 import Setting from "@/components/Setting/Setting";
 import Code from "@/components/Code/Code";
 import Read from "@/components/Read/Read";
 import Write from "@/components/Write/Write";
+import ErcInfo, { isERC20 } from "@/components/ErcInfo/ErcInfo";
 
 import { formatContractAbi, AbiItem } from "@/units/index";
 import { Network } from "@/config/index";
@@ -31,9 +32,7 @@ export default function Home() {
       setContractAbi(contractABI);
 
       setAddress(_address);
-    } catch (error) {
-      console.log("initContract error", error);
-    }
+    } catch (error) {}
   };
 
   const { readAbi, writeAbi } = useMemo(() => {
@@ -89,6 +88,13 @@ export default function Home() {
                   checkedAbi={checkedAbi.writeAbi}
                 ></Write>
               ),
+            },
+            {
+              icon: <StrikethroughOutlined />,
+              label: "ERC20",
+              key: "3",
+              disabled: !isERC20(contractAbi),
+              children: <ErcInfo address={address} network={network} abiList={contractAbi}></ErcInfo>,
             },
           ]}
         ></Tabs>

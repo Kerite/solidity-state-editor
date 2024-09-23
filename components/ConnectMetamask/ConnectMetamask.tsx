@@ -76,10 +76,10 @@ const Connect = ({
         <strong>Account: </strong>
         {account || "--"}
       </span>
-      <span>
+      {/* <span>
         <strong>Balance: </strong>
         {balance || "--"}
-      </span>
+      </span> */}
     </>
   );
 };
