@@ -1,0 +1,20 @@
+input.searcherInput {
+    flex-grow: 1;
+    color: #666666;
+}
+
+input.searcherInput::placeholder {
+    color: #999999;
+}
+
+input.searcherInput:focus {
+    outline: none;
+}
+
+svg.searcherIcon {
+    stroke: #999999;
+}
+
+svg.searcherIcon:hover {
+    stroke: #0C54BA;
+}

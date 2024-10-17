@@ -1,4 +1,4 @@
-import { chains } from "@/config/index";
+import {chains} from "@/config/index";
 
 const toHex = (num: number) => {
   return "0x" + num.toString(16);
@@ -38,7 +38,7 @@ export const switchNetwork = (chainId: Number) => {
     try {
       await ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
+        params: [{chainId: `0x${chainId.toString(16)}`}],
       });
       resolve(true);
     } catch (error) {
@@ -73,6 +73,11 @@ export interface AbiItem {
   checked?: boolean;
 }
 
+export interface AbiResult {
+  abi: AbiItem,
+  result?: string,
+}
+
 const READ_TYPE = ["view", "pure"];
 const WRITE_TYPE = ["nonpayable", "payable"];
 
@@ -98,4 +103,4 @@ const formatContractAbi = (abiList: AbiItem[]): { readAbi: AbiItem[]; writeAbi: 
   };
 };
 
-export { formatContractAbi };
+export {formatContractAbi};

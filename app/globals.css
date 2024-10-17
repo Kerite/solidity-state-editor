@@ -1,4 +1,9 @@
 body {
   margin: 0;
   padding: 0;
+  background: #f7f8fa;
+}
+
+.ant-collapse-content {
+  border-top: 3px solid #0C54BA !important;
 }

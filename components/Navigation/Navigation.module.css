@@ -1,0 +1,50 @@
+.tabDiv {
+    color: #666666;
+    font-weight: 400;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tabSpan {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.tabDiv:hover .tabSpan {
+    color: #7EB4FF;
+}
+
+.tabSpan.tabSelected {
+    color: #0C54BA;
+}
+
+.tabIndicator {
+    height: 2px;
+    width: 16px;
+    background: #0C54BA;
+    margin: 0 auto;
+}
+
+span.alphabetSpan {
+    flex-grow: 1;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 400;
+    font-size: 13px;
+    color: #999999;
+    user-select: none;
+}
+
+span.alphabetSpan:hover {
+    color: #7EB4FF;
+}
+
+span.abiNavigationSpan:hover {
+    color: #316EC4;
+}
