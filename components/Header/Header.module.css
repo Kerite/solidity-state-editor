@@ -5,13 +5,20 @@
 
   font-size: 18px;
 }
+
 .header strong {
   color: #1677ff;
   padding-right: 6px;
 }
-.header span {
-  margin: 0 30px;
-  color: rgba(255, 255, 255, 0.8);
+
+.logoSpan{
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 289px;
+  height: 34px;
 }
 
 .updataBtn {
@@ -23,3 +30,22 @@
 .submitBtn {
   float: right;
 }
+
+.header input{
+  color: #BCC1C7;
+}
+
+.header input::placeholder {
+  color: #626F7B;
+}
+
+.addressInput {
+  background: #1F3143;
+}
+
+.networkSelector {
+  width: 245px;
+  border: 1px solid #7EB4FF;
+  border-radius: 5px;
+}
+

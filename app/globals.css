@@ -1,4 +1,18 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    background: #f7f8fa;
+}
+
+.ant-collapse-content {
+    border-top: 3px solid #0C54BA !important;
+}
+
+.ant-select-item-option-selected {
+    background: transparent !important;
+}
+
+.ant-select-item-option {
+    box-sizing: border-box !important;
+    padding: 1px !important;
 }

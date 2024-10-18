@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Input, Modal, Layout, Form, Tag, Select, Button, App } from "antd";
+import {useState, useEffect} from "react";
+import {Input, Modal, Layout, Form, Tag, Select, Button, App, Dropdown, MenuProps, Image, ConfigProvider} from "antd";
 import axios from "axios";
-import { Network } from "@/config/index";
+import {Network} from "@/config/index";
 import style from "./Header.module.css";
 
 interface _Props {
   address: string | undefined;
   network: Network;
-  setNetork: (network: Network) => void;
+  setNetwork: (network: Network) => void;
   initData: (abiResult: string, address: string) => void;
+  loading: boolean;
+  setLoading: (value: boolean) => void;
 }
 
 const NETWORK_OPTIONS = [
@@ -32,66 +34,28 @@ const NETWORK_OPTIONS = [
   },
 ];
 
-const Header = ({ address, network, setNetork, initData }: _Props) => {
+const Header = (
+  {
+    network,
+    setNetwork,
+    initData,
+    loading,
+    setLoading
+  }: _Props) => {
   const [form] = Form.useForm();
 
-  const { message } = App.useApp();
-
-  const [visible, setVisible] = useState<boolean>(false);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const {message} = App.useApp();
 
   const [adderessHistoryTags, setAdderessHistoryTags] = useState<string[]>([]);
 
-  const switchModalVisible = () => setVisible(!visible);
-
-  const onSubmit = () => {
-    form.validateFields().then(async (res) => {
-      try {
-        setLoading(true);
-
-        const { data } = await axios.get(`/api/getAbi`, {
-          params: { address: res.address, network: res.network },
-        });
-
-        setLoading(false);
-
-        if (data.status !== "1") {
-          message.error(data.result);
-          return;
-        }
-
-        switchModalVisible();
-
-        initData(data.result, res.address);
-
-        setAdderessHistoryTags(Array.from(new Set([...adderessHistoryTags, res.address])));
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
-  const onSetFaild = (_tag: string) => {
-    if (address === _tag) return;
-    form.setFieldValue("address", _tag);
-    setTimeout(onSubmit);
-  };
-
-  const onRemoveTag = (_tag: string) => {
-    const _tags = adderessHistoryTags.filter((_t) => _t !== _tag);
-    setAdderessHistoryTags(_tags);
-  };
-
-  useEffect(() => {
-    if (!address) setVisible(true);
-  }, []);
+  const [contractAddress, setContractAddress] = useState<string>("");
 
   useEffect(() => {
     let _adderessHistoryTags = [...adderessHistoryTags];
     try {
       _adderessHistoryTags = JSON.parse(localStorage.getItem(`address_${network}`) || "[]");
-    } catch (error) {}
+    } catch (error) {
+    }
     setAdderessHistoryTags(_adderessHistoryTags);
 
     form.setFieldValue("address", "");
@@ -101,79 +65,94 @@ const Header = ({ address, network, setNetork, initData }: _Props) => {
     localStorage.setItem(`address_${network}`, JSON.stringify(adderessHistoryTags));
   }, [adderessHistoryTags]);
 
+  useEffect(() => {
+
+    setLoading(true);
+
+    if (contractAddress === '' || contractAddress === undefined) {
+      setLoading(false);
+      return
+    }
+
+    axios.get(`/api/getAbi`, {
+      params: {address: contractAddress, network: network},
+    }).then(({data}) => {
+      setLoading(false);
+
+      if (data.status !== "1") {
+        message.error(data.result);
+        return;
+      }
+
+      initData(data.result, contractAddress);
+
+      setAdderessHistoryTags(Array.from(new Set([...adderessHistoryTags, contractAddress])));
+    });
+  }, [contractAddress, network]);
+
   return (
-    <>
-      <Layout.Header className={style.header}>
-        <div>
-          <span>
-            <strong>Env:</strong>
-            {NETWORK_OPTIONS.find((v) => v.value === Number(network))?.label || "--"}
-          </span>
-          <span>
-            <strong>Address:</strong>
-            {address || "--"}
-          </span>
-        </div>
-
-        <Button size="large" type="primary" onClick={switchModalVisible}>
-          Edit
-        </Button>
-      </Layout.Header>
-      <Modal
-        width="50%"
-        title="Edit contract address."
-        open={visible}
-        keyboard
-        onCancel={switchModalVisible}
-        footer={null}
-      >
-        <Form
-          style={{ padding: "30px 0" }}
-          form={form}
-          onValuesChange={(_, allValues) => setNetork(allValues.network)}
-          initialValues={{
-            network: network,
-            address: address || "",
-          }}
-        >
-          <Form.Item
-            name="network"
-            label="network"
-            rules={[{ required: true, message: "Please select network.!" }]}
-          >
-            <Select placeholder="Please select network." options={NETWORK_OPTIONS}></Select>
-          </Form.Item>
-
-          <Form.Item
-            name="address"
-            label="address"
-            rules={[{ required: true, message: "Please input address!" }]}
-          >
-            <Input placeholder="Please input address." allowClear></Input>
-          </Form.Item>
-
-          <Button type="primary" loading={loading} onClick={onSubmit} className={style.submitBtn}>
-            Submit
-          </Button>
-        </Form>
-        <h4>Current env History:</h4>
-        {adderessHistoryTags.length === 0
-          ? "--"
-          : adderessHistoryTags.map((tag) => {
-              return (
-                <Tag
-                  style={{ cursor: "pointer" }}
-                  key={tag}
-                  closeIcon
-                  onClose={() => onRemoveTag(tag)}
-                  onClick={() => onSetFaild(tag)}
-                >
-                  {tag}
-                </Tag>
-              );
-            })}
-      </Modal>
-    </>
+    <Layout.Header style={{position: 'sticky'}} className={style.header}>
+      <span className={style.logoSpan}>
+        <img src="/logo.png" className={style.logo}/>
+      </span>
+      <div style={{
+        display: 'flex',
+        background: '#1F3143',
+        borderRadius: '5px',
+      }}>
+        <Input.Search
+          disabled={loading}
+          onSearch={setContractAddress}
+          style={{maxWidth: '532px'}}
+          placeholder="Please Input Address"
+          variant="borderless"/>
+      </div>
+      <span style={{width: '245px', display: 'flex'}}>
+        <ConfigProvider theme={{
+          token: {
+            colorText: '#7EB4FF',
+          }
+        }}>
+          <Select
+            variant="borderless"
+            onSelect={(value) => {
+              setNetwork(value)
+            }}
+            suffixIcon={
+              <svg width="8" height="10" viewBox="0 0 8 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M7.03783 4.22229C7.533 4.62253 7.533 5.37747 7.03783 5.77771L2.12862 9.74578C1.47468 10.2744 0.499999 9.80892 0.5 8.96807L0.5 1.03193C0.5 0.191082 1.47468 -0.274355 2.12862 0.254219L7.03783 4.22229Z"
+                  fill="#7EB4FF"/>
+              </svg>
+            }
+            dropdownStyle={{padding: 0, background: 'transparent'}}
+            dropdownRender={(menu) => (
+              <div style={{background: '#001529B2', backdropFilter: 'blur(29.200000762939453px)'}}>
+                {menu}
+              </div>
+            )}
+            className={style.networkSelector}
+            optionRender={(option) => (
+              <div style={{
+                height: '45px',
+                borderBottom: '1px solid #7EB4FF',
+                background: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '0 10px'
+              }}>
+                <span style={{
+                  color: network == option.value ? '#7EB4FF' : 'white',
+                }}
+                >{option.label}</span>
+              </div>
+            )}
+            labelRender={(props) => (<span style={{color: '#7EB4FF'}}>{props.label}</span>)}
+            options={NETWORK_OPTIONS}
+            defaultValue={network}/>
+        </ConfigProvider>
+      </span>
+    </Layout.Header>
   );
 };
 

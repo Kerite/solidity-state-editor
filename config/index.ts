@@ -1,6 +1,8 @@
-"use client";
+import { Inter } from "next/font/google";
 
 const API_KEY_ETHERSCAN = process.env.NEXT_PUBLIC_API_KEY_ETHERSCAN;
+
+export const InterFont = Inter({ subsets: ["latin"] });
 
 export enum Network {
   Ethereum = 1,

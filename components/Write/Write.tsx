@@ -1,26 +1,28 @@
-import { Collapse, Form, Input, Button, App } from "antd";
-import { useEffect, useState } from "react";
-import { NetworkOrigin, Network } from "@/config/index";
-import type { AbiItem } from "@/units/index";
-import { ethers } from "ethers";
+import {Collapse, Form, Input, Button, App, message} from "antd";
+import {useEffect, useRef, useState} from "react";
+import {NetworkOrigin, Network} from "@/config";
+import {AbiItem, switchNetwork} from "@/units";
+import {ethers} from "ethers";
+
+import style from "./Write.module.css";
 
 import ConnectMetamask from "../ConnectMetamask/ConnectMetamask";
 
-const Label = ({ name, type }: { name: string; type: string }) => {
+const Label = ({name, type}: { name: string; type: string }) => {
   return (
     <span>
       <strong>{name}</strong>
-      <span style={{ color: "#999" }}>[{type}]</span>
+      <span style={{color: "#999"}}>[{type}]</span>
     </span>
   );
 };
 
 const FormContent = ({
-  inputs,
-  contract,
-  name,
-  origin,
-}: {
+                       inputs,
+                       contract,
+                       name,
+                       origin,
+                     }: {
   name: AbiItem["name"];
   inputs: AbiItem["inputs"];
   contract: any;
@@ -30,10 +32,16 @@ const FormContent = ({
 
   const [txList, setTxList] = useState<{ hash: string; status: boolean }[]>([]);
 
-  const { message } = App.useApp();
+  const {message} = App.useApp();
+
+  // let event = useRef({} as event);
 
   const onSubmit = async () => {
     const data = await form.validateFields();
+
+    console.log(data);
+    console.log(inputs);
+
     const params = inputs.reduce((pre, cur) => {
       let val = data[cur.name];
       if (cur.type.includes("uint")) {
@@ -41,6 +49,8 @@ const FormContent = ({
       }
       return [...pre, val];
     }, []);
+
+    console.log(params);
 
     if (!contract) {
       message.error("please connect to MetaMask");
@@ -50,7 +60,7 @@ const FormContent = ({
     const action = contract[name];
     try {
       const tx = await action.apply(null, params);
-      setTxList((_t) => [..._t, { hash: tx.hash, status: false }]);
+      setTxList((_t) => [..._t, {hash: tx.hash, status: false}]);
       // 等待交易被确认
       const receipt = await tx.wait();
       setTxList((_txList) => {
@@ -75,11 +85,11 @@ const FormContent = ({
         {inputs.map((v, i) => {
           return (
             <Form.Item
-              style={{ marginBottom: 0 }}
+              style={{marginBottom: 0}}
               key={`${v.name}_${i}`}
               name={v.name}
               label={<Label name={v.name} type={v.type}></Label>}
-              rules={[{ required: true, message: `Please input ${v.name}!` }]}
+              rules={[{required: true, message: `Please input ${v.name}!`}]}
             >
               <Input placeholder={`Please input ${v.name}.`}></Input>
             </Form.Item>
@@ -106,21 +116,21 @@ const FormContent = ({
 };
 
 const Write = ({
-  abiList,
-  network,
-  address,
-  checkedAbi,
-}: {
+                 abiList,
+                 network,
+                 address,
+               }: {
   abiList: AbiItem[];
   network: Network;
   address: string;
-  checkedAbi: string[];
 }) => {
   const origin = (network && NetworkOrigin[network].origin) || "";
 
   const [contract, setContract] = useState<any>();
 
   const [signer, setSigner] = useState<any>(null);
+
+  const [activatedKeys, setActivatedKeys] = useState<string[]>()
 
   useEffect(() => {
     setSigner(null);
@@ -133,15 +143,40 @@ const Write = ({
     } else {
       setContract(null);
     }
-  }, [signer]);
+  }, [abiList, address, signer]);
+
+  const connectMetamask = async () => {
+    // @ts-ignore
+    const ethereum = window.ethereum;
+    if (!ethereum) {
+      message.error("not find metamask");
+      return;
+    }
+
+    const {chainId} = NetworkOrigin[network];
+
+    await switchNetwork(chainId);
+
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+
+      await provider.send("eth_requestAccounts", []);
+
+      const newSigner = provider.getSigner();
+
+      setSigner(newSigner);
+    } catch (error) {
+    }
+  }
 
   return (
     <>
-      <ConnectMetamask signer={signer} setSigner={setSigner} network={network}></ConnectMetamask>
-
       <Collapse
+        activeKey={activatedKeys}
+        bordered={false}
+        expandIconPosition={'end'}
+        style={{background: 'white', borderRadius: 0}}
         items={abiList
-          .filter((v) => checkedAbi.includes(v.name))
           .map((item, i) => {
             return {
               key: `${item.name}_${i}`,

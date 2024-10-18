@@ -58,7 +58,7 @@ const ErcInfo = ({
     const constract = new ethers.Contract(address, abiList, provider);
 
     setContract(constract);
-  }, [abiList, address]);
+  }, [abiList, address, network]);
 
   useEffect(() => {
     if (signer) {
@@ -67,7 +67,7 @@ const ErcInfo = ({
         setErc20((v: any) => ({ ...v, balance }));
       });
     }
-  }, [signer]);
+  }, [contract, signer]);
 
   const loopLoadMethods = async (method: string) => {
     const value = await contract[method]();
