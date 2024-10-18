@@ -34,16 +34,12 @@ const getAbiKey = (abi: AbiItem) => {
 }
 
 const StateEditor = ({network, address, abi}: StateEditorProps) => {
-
   const [keyword, setKeyword] = useState<string>('');
-
   const [operation, setOperation] = useState<Operation>(Operation.READ);
-
   const [viewModels, setViewModels] = useState<AbiItemViewModel[]>([]);
-
   const [displayedViewModels, setDisplayedViewModels] = useState<AbiItemViewModel[]>([]);
-
   const [hiddenList, setHiddenList] = useState<string[]>([])
+  const [abiHistory, setAbiHistory] = useState<string[]>([]);
 
   const toggleHidden = (abiKey: string) => {
     if (hiddenList.includes(abiKey)) {
@@ -95,6 +91,7 @@ const StateEditor = ({network, address, abi}: StateEditorProps) => {
         return item.key === abiKey ? {...item, result: result} : item;
       })
     })
+    setAbiHistory([...abiHistory, abiKey]);
   }
 
   const selectedTabStyle = {
@@ -124,7 +121,12 @@ const StateEditor = ({network, address, abi}: StateEditorProps) => {
             <Read abiViewModels={displayedViewModels} network={network} address={address} setResult={setResult}/>
         }
       </div>
-      <Navigation toggleHidden={toggleHidden} keyword={keyword} abiItems={displayedViewModels} navigateTo={navigateTo}/>
+      <Navigation
+        history={abiHistory}
+        toggleHidden={toggleHidden}
+        keyword={keyword}
+        abiItems={displayedViewModels}
+        navigateTo={navigateTo}/>
     </div>
   )
 };

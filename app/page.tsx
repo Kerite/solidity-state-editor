@@ -6,7 +6,7 @@ import {AbiItem} from "@/units";
 import {InterFont, Network} from "@/config";
 import EmptyPage from "@/components/EmptyPage/EmptyPage";
 import StateEditor from "@/components/StateEditor/StateEditor";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, Spin} from "antd";
 
 enum PageState {
   NO_ERROR,
@@ -22,6 +22,7 @@ export default function Home() {
   const [pageState, setPageState] = useState<PageState>(PageState.NO_SEARCHING);
 
   const [contractAbi, setContractAbi] = useState<AbiItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const initData = async (result: string, _address: string) => {
     try {
@@ -45,21 +46,23 @@ export default function Home() {
         fontFamily: InterFont.style.fontFamily
       }
     }}>
-      <Header address={address} network={network} setNetwork={setNetwork} initData={initData}></Header>
+      <Header
+        address={address}
+        network={network}
+        setNetwork={setNetwork}
+        loading={loading}
+        setLoading={setLoading}
+        initData={initData}/>
 
       {/*<Setting contractAbi={{readAbi, writeAbi}} checkedAbi={checkedAbi} setCheckedAbi={setCheckedAbi}/>*/}
 
-      <div style={{padding: 20}}>
-        {
-          pageState == PageState.NO_SEARCHING && (
-            <EmptyPage/>
-          )
-        }
-        {
-          pageState == PageState.NO_ERROR && (
-            <StateEditor address={address} abi={contractAbi} network={network}/>
-          )
-        }
+      <div style={{padding: '20px'}}>
+        <Spin spinning={loading}>
+          {
+            pageState == PageState.NO_SEARCHING && <EmptyPage/> ||
+            pageState == PageState.NO_ERROR && <StateEditor address={address} abi={contractAbi} network={network}/>
+          }
+        </Spin>
       </div>
     </ConfigProvider>
   );

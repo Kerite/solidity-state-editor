@@ -11,6 +11,8 @@ interface _Props {
   network: Network;
   setNetwork: (network: Network) => void;
   initData: (abiResult: string, address: string) => void;
+  loading: boolean;
+  setLoading: (value: boolean) => void;
 }
 
 const NETWORK_OPTIONS = [
@@ -32,12 +34,17 @@ const NETWORK_OPTIONS = [
   },
 ];
 
-const Header = ({network, setNetwork, initData}: _Props) => {
+const Header = (
+  {
+    network,
+    setNetwork,
+    initData,
+    loading,
+    setLoading
+  }: _Props) => {
   const [form] = Form.useForm();
 
   const {message} = App.useApp();
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const [adderessHistoryTags, setAdderessHistoryTags] = useState<string[]>([]);
 
@@ -111,7 +118,36 @@ const Header = ({network, setNetwork, initData}: _Props) => {
             onSelect={(value) => {
               setNetwork(value)
             }}
+            suffixIcon={
+              <svg width="8" height="10" viewBox="0 0 8 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M7.03783 4.22229C7.533 4.62253 7.533 5.37747 7.03783 5.77771L2.12862 9.74578C1.47468 10.2744 0.499999 9.80892 0.5 8.96807L0.5 1.03193C0.5 0.191082 1.47468 -0.274355 2.12862 0.254219L7.03783 4.22229Z"
+                  fill="#7EB4FF"/>
+              </svg>
+            }
+            dropdownStyle={{padding: 0, background: 'transparent'}}
+            dropdownRender={(menu) => (
+              <div style={{background: '#001529B2', backdropFilter: 'blur(29.200000762939453px)'}}>
+                {menu}
+              </div>
+            )}
             className={style.networkSelector}
+            optionRender={(option) => (
+              <div style={{
+                height: '45px',
+                borderBottom: '1px solid #7EB4FF',
+                background: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '0 10px'
+              }}>
+                <span style={{
+                  color: network == option.value ? '#7EB4FF' : 'white',
+                }}
+                >{option.label}</span>
+              </div>
+            )}
+            labelRender={(props) => (<span style={{color: '#7EB4FF'}}>{props.label}</span>)}
             options={NETWORK_OPTIONS}
             defaultValue={network}/>
         </ConfigProvider>

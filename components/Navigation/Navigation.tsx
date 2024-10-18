@@ -39,33 +39,25 @@ export interface NavigationProps {
   abiItems: AbiItemViewModel[];
   navigateTo: (abiKey: string) => void;
   toggleHidden: (abiKey: string) => void;
+  history: string[];
 }
 
-const Navigation = ({abiItems, keyword, navigateTo, toggleHidden}: NavigationProps) => {
+const Navigation = (
+  {
+    abiItems,
+    keyword,
+    navigateTo,
+    toggleHidden,
+    history,
+  }: NavigationProps) => {
 
   const [selectedTab, setSelectedTab] = useState<TabKey>(TabKey.ALL);
-
-  const [historyList, setHistoryList] = useState<string[]>(localStorage.getItem('history') ? JSON.parse(localStorage.getItem('history') as string) : []);
-
   const [selectedAlphabet, setSelectedAlphabet] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    localStorage.setItem('history', JSON.stringify(historyList));
-  }, [historyList]);
-
-  useEffect(() => {
-    setHistoryList(JSON.parse(localStorage.getItem('history') as string) || []);
-  }, []);
-
-  const addHistory = (abiKey: string) => {
-    if (historyList.includes(abiKey)) return;
-    setHistoryList([abiKey, ...historyList]);
-  }
 
   return (
     <Flex style={{flexFlow: 'column', background: 'white', height: 'fit-content'}}>
       {/* all / shown / hidden / history */}
-      <Flex style={{flexFlow: 'row-reverse', gap: '20px', height: '50px'}}>
+      <Flex style={{flexFlow: 'row-reverse', gap: '20px', height: '50px', borderBottom: '1px solid #0000001F', paddingRight: '20px'}}>
         {
           tabList.map((tabItem) => {
             return (
@@ -75,7 +67,7 @@ const Navigation = ({abiItems, keyword, navigateTo, toggleHidden}: NavigationPro
                 key={`tab-${tabItem.key}`}
                 onClick={() => setSelectedTab(tabItem.key)}>
                 <span className={styles.tabSpan}>{tabItem.title}</span>
-                <div className={styles.tabIndicator}></div>
+                <div className={selectedTab === tabItem.key ? styles.tabIndicator : undefined}></div>
               </div>
             )
           })
@@ -105,10 +97,12 @@ const Navigation = ({abiItems, keyword, navigateTo, toggleHidden}: NavigationPro
               if (selectedTab === TabKey.ALL) return item.key.toLowerCase().startsWith(selectedAlphabet.toLowerCase());
               if (selectedTab === TabKey.SHOWN) return item.key.toLowerCase().startsWith(selectedAlphabet.toLowerCase()) && !item.hidden;
               if (selectedTab === TabKey.HIDDEN) return item.key.toLowerCase().startsWith(selectedAlphabet.toLowerCase()) && item.hidden;
+              if (selectedTab === TabKey.HISTORY) return history.includes(item.key);
             } else {
               if (selectedTab === TabKey.ALL) return true;
               if (selectedTab === TabKey.SHOWN) return !item.hidden;
               if (selectedTab === TabKey.HIDDEN) return item.hidden;
+              if (selectedTab === TabKey.HISTORY) return history.includes(item.key);
             }
           })}
         renderItem={(item) => {
